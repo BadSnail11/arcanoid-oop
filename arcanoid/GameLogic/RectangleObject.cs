@@ -5,6 +5,8 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Controls;
 
 namespace arcanoid.GameLogic
 {
@@ -12,6 +14,7 @@ namespace arcanoid.GameLogic
     {
         public Double Width { get; set; }
         public Double Height { get; set; }
+        private Rectangle rectangle;
         RectangleObject(double x, double y, double width, double height, double speed, double angle)
         {
             X = x;
@@ -21,6 +24,20 @@ namespace arcanoid.GameLogic
             Speed = speed;
             Angle = angle;
             color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+
+            rectangle = new Rectangle
+            {
+                Width = width,
+                Height = height,
+                Fill = color
+            };
+        }
+        public override void Draw(Canvas canvas)
+        {
+            if (!canvas.Children.Contains(rectangle))
+                canvas.Children.Add(rectangle);
+            Canvas.SetLeft(rectangle, X);
+            Canvas.SetTop(rectangle, Y);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using arcanoid.GameLogic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,8 +17,11 @@ namespace arcanoid;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private Game game;
     public MainWindow()
     {
         InitializeComponent();
+        game = new Game(GameCanvas);
+        game.Start();
     }
 }
