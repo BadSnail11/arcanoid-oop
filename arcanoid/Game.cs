@@ -21,6 +21,21 @@ namespace arcanoid
             Y += Speed * Math.Sin(radians);
         }
     }
+    class Rectangle: DisplayObject
+    {
+        public Double Width { get; set; }
+        public Double Height { get; set; }
+        Rectangle(double x, double y, double width, double height, double speed, double angle)
+        {
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+            Speed = speed;
+            Angle = angle;
+            color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+        }
+    }
     class Stage
     {
         private List<DisplayObject> objects = new List<DisplayObject>();
@@ -34,5 +49,19 @@ namespace arcanoid
     }
     class Game
     {
+        private Stage stage = new Stage();
+        private bool running = true;
+        public void Start()
+        {
+            Task.Run(() =>
+            {
+                while (running)
+                {
+                    stage.update();
+                    Thread.Sleep(16);
+                }
+            });
+        }
+        public void Stop() => running = false;
     }
 }
