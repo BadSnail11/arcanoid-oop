@@ -9,7 +9,7 @@ namespace arcanoid.GameLogic
 {
     class Stage
     {
-        private List<DisplayObject> objects = new List<DisplayObject>();
+        public List<DisplayObject> objects = new List<DisplayObject>();
         private Canvas canvas;
         public Stage(Canvas gameCanvas)
         {

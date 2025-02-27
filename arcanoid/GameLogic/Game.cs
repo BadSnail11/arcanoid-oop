@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -13,13 +14,15 @@ namespace arcanoid.GameLogic
     class Game
     {
         private Stage stage;
-        private bool running = true;
-        private DispatcherTimer timer;
+        private bool isRunning = false;
+        private DispatcherTimer renderTimer;
+        private Thread physicsThread;
         private Random random = new Random();
         private double canvasWidth;
         private double canvasHeight;
         private Canvas gameCanvas;
         private Window mainWindow;
+        private bool isFullscreen = false;
 
         public Game(Window window, Canvas gameCanvas)
         {
@@ -28,14 +31,23 @@ namespace arcanoid.GameLogic
             stage = new Stage(gameCanvas);
             //canvasWidth = gameCanvas.Width;
             //canvasHeight = gameCanvas.Height;
-            timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
-            timer.Tick += (s, e) => { stage.Update(gameCanvas.Width, gameCanvas.Height); stage.Draw(); };
+            renderTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(0.1) };
+            renderTimer.Tick += (s, e) => { stage.Draw(); };
             InitializeObjects();
 
             mainWindow.SizeChanged += (s, e) =>
             {
                 gameCanvas.Width = mainWindow.Width;
                 gameCanvas.Height = mainWindow.Height;
+                EnsureObjectsWithinBounds();
+            };
+
+            mainWindow.KeyDown += (s, e) =>
+            {
+                if (e.Key == Key.F)
+                {
+                    ToggleFullscreen();
+                }
             };
         }
         private void InitializeObjects()
@@ -48,8 +60,58 @@ namespace arcanoid.GameLogic
                 stage.AddObject(new CircleObject(random.Next(50, 750), random.Next(50, 550), 15, random.Next(2, 6), random.Next(0, 360)));
             }
         }
+        private void ToggleFullscreen()
+        {
+            if (isFullscreen)
+            {
+                mainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+                mainWindow.WindowState = WindowState.Normal;
+            }
+            else
+            {
+                mainWindow.WindowStyle = WindowStyle.None;
+                mainWindow.WindowState = WindowState.Maximized;
+            }
+            isFullscreen = !isFullscreen;
+        }
+        private void EnsureObjectsWithinBounds()
+        {
+            foreach (var obj in stage.objects)
+            {
+                if (obj.X < 0) obj.X = 0;
+                if (obj.X > gameCanvas.Width) obj.X = gameCanvas.Width;
+                if (obj.Y < 0) obj.Y = 0;
+                if (obj.Y > gameCanvas.Height) obj.Y = gameCanvas.Height;
+            }
+        }
+        private void PhysicsLoop()
+        {
+            while (isRunning)
+            {
+                double width = 0, height = 0;
 
-        public void Start() => timer.Start();
-        public void Stop() => timer.Stop();
+                gameCanvas.Dispatcher.Invoke(() =>
+                {
+                    width = gameCanvas.Width;
+                    height = gameCanvas.Height;
+                });
+
+                stage.Update(width, height);
+                Thread.Sleep(16); // 60 FPS
+            }
+        }
+        public void Start()
+        {
+            isRunning = true;
+            renderTimer.Start();
+            physicsThread = new Thread(PhysicsLoop) { IsBackground = true };
+            physicsThread.Start();
+        }
+        public void Stop()
+        {
+            isRunning = false;
+            renderTimer.Stop();
+            physicsThread.Join();
+        }
     }
 }
