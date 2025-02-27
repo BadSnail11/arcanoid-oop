@@ -13,7 +13,7 @@ namespace arcanoid.GameLogic
     {
         private Polygon trapezoid;
 
-        public TrapezoidObject(double x, double y, double width, double height, double speed, double angle, double acceleration, double accelAngle)
+        public TrapezoidObject(double x, double y, double width, double height, Color color, double speed, double angle, double acceleration, double accelAngle)
         {
             X = x;
             Y = y;
@@ -21,11 +21,12 @@ namespace arcanoid.GameLogic
             Angle = angle;
             Acceleration = acceleration;
             AccelAngle = accelAngle;
-            color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+            //color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+            this.color = new SolidColorBrush(color);
 
             trapezoid = new Polygon
             {
-                Fill = color,
+                Fill = this.color,
                 Points = new PointCollection
                 {
                     new System.Windows.Point(width * 0.25, 0),

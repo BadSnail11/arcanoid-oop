@@ -12,7 +12,7 @@ namespace arcanoid.GameLogic
     class TriangleObject : DisplayObject
     {
         private Polygon triangle;
-        public TriangleObject(double x, double y, double size, double speed, double angle, double acceleration, double accelAngle)
+        public TriangleObject(double x, double y, double size, Color color, double speed, double angle, double acceleration, double accelAngle)
         {
             X = x;
             Y = y;
@@ -20,11 +20,12 @@ namespace arcanoid.GameLogic
             Angle = angle;
             Acceleration = acceleration;
             AccelAngle = accelAngle;
-            color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+            //color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+            this.color = new SolidColorBrush(color);
 
             triangle = new Polygon
             {
-                Fill = color,
+                Fill = this.color,
                 Points = new PointCollection
                 {
                     new System.Windows.Point(0, 0),

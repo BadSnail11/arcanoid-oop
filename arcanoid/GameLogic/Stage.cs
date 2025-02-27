@@ -18,20 +18,20 @@ namespace arcanoid.GameLogic
             canvas = gameCanvas;
             //DrawBorder(gameCanvas);
         }
-        public static void DrawBorder(Canvas canvas)
-        {
-            Rectangle border = new Rectangle
-            {
-                Width = canvas.Width - 13,
-                Height = canvas.Height - 37,
-                Stroke = Brushes.Black,
-                StrokeThickness = 5,
-                Fill = Brushes.Transparent
-            };
-            Canvas.SetLeft(border, 0);
-            Canvas.SetTop(border, 0);
-            canvas.Children.Add(border);
-        }
+        //public static void DrawBorder(Canvas canvas)
+        //{
+        //    Rectangle border = new Rectangle
+        //    {
+        //        Width = canvas.Width - 13,
+        //        Height = canvas.Height - 37,
+        //        Stroke = Brushes.Black,
+        //        StrokeThickness = 5,
+        //        Fill = Brushes.Transparent
+        //    };
+        //    Canvas.SetLeft(border, 0);
+        //    Canvas.SetTop(border, 0);
+        //    canvas.Children.Add(border);
+        //}
         public void AddObject(DisplayObject obj) => objects.Add(obj);
         public void RemoveObject(DisplayObject obj) => objects.Remove(obj);
         public void Update(double canvasWidth, double canvasHeight, bool useAcceleration)

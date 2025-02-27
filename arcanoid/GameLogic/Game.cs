@@ -66,10 +66,48 @@ namespace arcanoid.GameLogic
         {
             for (int i = 0; i < 10; i++)
             {
-                stage.AddObject(new RectangleObject(random.Next(50, 750), random.Next(50, 550), 40, 20, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
-                stage.AddObject(new TriangleObject(random.Next(50, 750), random.Next(50, 550), 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
-                stage.AddObject(new TrapezoidObject(random.Next(50, 750), random.Next(50, 550), 50, 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
-                stage.AddObject(new CircleObject(random.Next(50, 750), random.Next(50, 550), 15, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                //stage.AddObject(new RectangleObject(random.Next(50, 750), random.Next(50, 550), 40, 20, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                //stage.AddObject(new TriangleObject(random.Next(50, 750), random.Next(50, 550), 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                //stage.AddObject(new TrapezoidObject(random.Next(50, 750), random.Next(50, 550), 50, 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                //stage.AddObject(new CircleObject(random.Next(50, 750), random.Next(50, 550), 15, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                stage.AddObject(new RectangleObject(
+                    x: random.Next(50, 750),
+                    y: random.Next(50, 550),
+                    width: random.Next(20, 80),
+                    height: random.Next(20, 80),
+                    color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
+                    speed: random.Next(2, 4),
+                    angle: random.Next(0, 360),
+                    acceleration: random.Next(2, 6),
+                    accelAngle: random.Next(0, 360)));
+                stage.AddObject(new TriangleObject(
+                    x: random.Next(50, 750),
+                    y: random.Next(50, 550),
+                    size: random.Next(20, 60),
+                    color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
+                    speed: random.Next(2, 4),
+                    angle: random.Next(0, 360),
+                    acceleration: random.Next(2, 6),
+                    accelAngle: random.Next(0, 360)));
+                stage.AddObject(new TrapezoidObject(
+                    x: random.Next(50, 750),
+                    y: random.Next(50, 550),
+                    width: random.Next(20, 80),
+                    height: random.Next(20, 80),
+                    color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
+                    speed: random.Next(2, 4),
+                    angle: random.Next(0, 360),
+                    acceleration: random.Next(2, 6),
+                    accelAngle: random.Next(0, 360)));
+                stage.AddObject(new CircleObject(
+                    x: random.Next(50, 750),
+                    y: random.Next(50, 550),
+                    radius: random.Next(15, 40),
+                    color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
+                    speed: random.Next(2, 4),
+                    angle: random.Next(0, 360),
+                    acceleration: random.Next(2, 6),
+                    accelAngle: random.Next(0, 360)));
             }
         }
         private void ToggleFullscreen()

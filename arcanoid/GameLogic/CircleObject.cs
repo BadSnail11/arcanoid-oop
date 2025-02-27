@@ -14,7 +14,7 @@ namespace arcanoid.GameLogic
         private Ellipse circle;
         public double Radius { get; set; }
 
-        public CircleObject(double x, double y, double radius, double speed, double angle, double acceleration, double accelAngle)
+        public CircleObject(double x, double y, double radius, Color color, double speed, double angle, double acceleration, double accelAngle)
         {
             X = x;
             Y = y;
@@ -23,13 +23,14 @@ namespace arcanoid.GameLogic
             Angle = angle;
             Acceleration = acceleration;
             AccelAngle = accelAngle;
-            color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+            //color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
+            this.color = new SolidColorBrush(color);
 
             circle = new Ellipse
             {
                 Width = Radius * 2,
                 Height = Radius * 2,
-                Fill = color,
+                Fill = this.color,
                 Stroke = Brushes.Black,
                 StrokeThickness = 1
             };
