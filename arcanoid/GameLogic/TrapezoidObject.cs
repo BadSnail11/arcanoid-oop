@@ -13,12 +13,14 @@ namespace arcanoid.GameLogic
     {
         private Polygon trapezoid;
 
-        public TrapezoidObject(double x, double y, double width, double height, double speed, double angle)
+        public TrapezoidObject(double x, double y, double width, double height, double speed, double angle, double acceleration, double accelAngle)
         {
             X = x;
             Y = y;
             Speed = speed;
             Angle = angle;
+            Acceleration = acceleration;
+            AccelAngle = accelAngle;
             color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
 
             trapezoid = new Polygon

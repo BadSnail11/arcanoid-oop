@@ -15,7 +15,7 @@ namespace arcanoid.GameLogic
         public Double Width { get; set; }
         public Double Height { get; set; }
         private Rectangle rectangle;
-        public RectangleObject(double x, double y, double width, double height, double speed, double angle)
+        public RectangleObject(double x, double y, double width, double height, double speed, double angle, double acceleration, double accelAngle)
         {
             X = x;
             Y = y;
@@ -23,6 +23,8 @@ namespace arcanoid.GameLogic
             Height = height;
             Speed = speed;
             Angle = angle;
+            Acceleration = acceleration;
+            AccelAngle = accelAngle;
             color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
 
             rectangle = new Rectangle

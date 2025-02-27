@@ -26,17 +26,17 @@ namespace arcanoid.GameLogic
         private Canvas gameCanvas;
         private Window mainWindow;
         private bool isFullscreen = false;
+        private bool useAcceleration = false;
 
         public Game(Window window, Canvas gameCanvas)
         {
             this.gameCanvas = gameCanvas;
             this.mainWindow = window;
             stage = new Stage(gameCanvas);
-            //canvasWidth = gameCanvas.Width;
-            //canvasHeight = gameCanvas.Height;
             renderTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(0.1) };
             renderTimer.Tick += (s, e) => { stage.Draw(); };
             InitializeObjects();
+            ToggleFullscreen();
 
 
             mainWindow.SizeChanged += (s, e) =>
@@ -56,16 +56,20 @@ namespace arcanoid.GameLogic
                 {
                     TogglePause();
                 }
+                else if (e.Key == Key.A)
+                {
+                    useAcceleration = !useAcceleration;
+                }
             };
         }
         private void InitializeObjects()
         {
             for (int i = 0; i < 10; i++)
             {
-                stage.AddObject(new RectangleObject(random.Next(50, 750), random.Next(50, 550), 40, 20, random.Next(2, 6), random.Next(0, 360)));
-                stage.AddObject(new TriangleObject(random.Next(50, 750), random.Next(50, 550), 30, random.Next(2, 6), random.Next(0, 360)));
-                stage.AddObject(new TrapezoidObject(random.Next(50, 750), random.Next(50, 550), 50, 30, random.Next(2, 6), random.Next(0, 360)));
-                stage.AddObject(new CircleObject(random.Next(50, 750), random.Next(50, 550), 15, random.Next(2, 6), random.Next(0, 360)));
+                stage.AddObject(new RectangleObject(random.Next(50, 750), random.Next(50, 550), 40, 20, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                stage.AddObject(new TriangleObject(random.Next(50, 750), random.Next(50, 550), 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                stage.AddObject(new TrapezoidObject(random.Next(50, 750), random.Next(50, 550), 50, 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
+                stage.AddObject(new CircleObject(random.Next(50, 750), random.Next(50, 550), 15, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
             }
         }
         private void ToggleFullscreen()
@@ -110,7 +114,7 @@ namespace arcanoid.GameLogic
                         height = gameCanvas.Height;
                     });
 
-                    stage.Update(width, height);
+                    stage.Update(width, height, useAcceleration);
                 }
                 Thread.Sleep(16); // 60 FPS
             }

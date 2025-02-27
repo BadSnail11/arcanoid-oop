@@ -14,13 +14,15 @@ namespace arcanoid.GameLogic
         private Ellipse circle;
         public double Radius { get; set; }
 
-        public CircleObject(double x, double y, double radius, double speed, double angle)
+        public CircleObject(double x, double y, double radius, double speed, double angle, double acceleration, double accelAngle)
         {
             X = x;
             Y = y;
             Radius = radius;
             Speed = speed;
             Angle = angle;
+            Acceleration = acceleration;
+            AccelAngle = accelAngle;
             color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
 
             circle = new Ellipse
