@@ -17,6 +17,12 @@ namespace arcanoid.GameLogic
         public Double Acceleration { get; set; }
         public Double AccelAngle { get; set; }
         public SolidColorBrush color { get; set; }
+
+        public event Action<DisplayObject> OnClick;
+        protected void RaiseClickEvent()
+        {
+            OnClick?.Invoke(this);
+        }
         public abstract void Draw(Canvas canvas);
         public virtual void Move(double width, double height, bool useAcceleration = false)
         {

@@ -77,14 +77,24 @@ namespace arcanoid.GameLogic
         {
             if (!canvas.Children.Contains(rectangle))
                 canvas.Children.Add(rectangle);
+            if (rectangle.Tag == null)
+            {
+                rectangle.MouseDown += (s, e) => RaiseClickEvent();
+                rectangle.Tag = true; // Помечаем, что обработчик уже добавлен
+            }
             Canvas.SetLeft(rectangle, X);
             Canvas.SetTop(rectangle, Y);
             if (!(textBlock is null))
             {
                 if (!canvas.Children.Contains(textBlock))
                     canvas.Children.Add(textBlock);
+                if (textBlock.Tag == null)
+                {
+                    textBlock.MouseDown += (s, e) => RaiseClickEvent();
+                    textBlock.Tag = true; // Помечаем, что обработчик уже добавлен
+                }
                 Canvas.SetLeft(textBlock!, X);
-                Canvas.SetTop(textBlock!, Y);
+                Canvas.SetTop(textBlock!, Y + rectangle.Height / 2 - 7);
             }
         }
     }

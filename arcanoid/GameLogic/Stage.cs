@@ -18,11 +18,6 @@ namespace arcanoid.GameLogic
         {
             canvas = gameCanvas;
             //DrawBorder(gameCanvas);
-            menuObjects.Add(new RectangleObject(0, 0, 100, 50, Color.FromRgb(50, 50, 50), "Play"));
-            menuObjects.Add(new RectangleObject(0, 60, 100, 50, Color.FromRgb(50, 50, 50), "Save"));
-            menuObjects.Add(new RectangleObject(0, 120, 100, 50, Color.FromRgb(50, 50, 50), "Load"));
-            menuObjects.Add(new RectangleObject(0, 180, 100, 50, Color.FromRgb(50, 50, 50), "Settings"));
-            menuObjects.Add(new RectangleObject(0, 240, 100, 50, Color.FromRgb(50, 50, 50), "Exit"));
         }
         public void AddObject(DisplayObject obj) => objects.Add(obj);
         public void RemoveObject(DisplayObject obj) => objects.Remove(obj);
@@ -33,11 +28,15 @@ namespace arcanoid.GameLogic
         }
         public void DrawMenu(double canvasWidth, double canvasHeight)
         {
-            for (int i = 0; i < menuObjects.Count; i++)
+            var obj = menuObjects[0];
+            obj.X = canvasWidth / 2 - 75;
+            obj.Y = canvasHeight / 2 - 215;
+            obj.Draw(canvas);
+            for (int i = 1; i < menuObjects.Count; i++)
             {
-                var obj = menuObjects[i];
+                obj = menuObjects[i];
                 obj.X = canvasWidth / 2 - 50;
-                obj.Y = canvasHeight / 2 - 200 + (60 * i);
+                obj.Y = canvasHeight / 2 - 200 + (60 * (i - 1));
                 obj.Draw(canvas);
             }
         }

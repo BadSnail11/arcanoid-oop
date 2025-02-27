@@ -67,18 +67,27 @@ namespace arcanoid.GameLogic
                 }
                 else if (e.Key == Key.Escape)
                 {
-                    isMenu = !isMenu;
+                    ToggleMenu();
                 }
             };
         }
         private void InitializeObjects()
         {
+            stage.menuObjects.Add(new RectangleObject(0, 0, 150, 320, Color.FromRgb(100, 100, 100), ""));
+            var playRect = new RectangleObject(0, 0, 100, 50, Color.FromRgb(50, 50, 50), "Play");
+            playRect.OnClick += obj => ToggleMenu();
+            stage.menuObjects.Add(playRect);
+            var saveRect = new RectangleObject(0, 60, 100, 50, Color.FromRgb(50, 50, 50), "Save");
+            stage.menuObjects.Add(saveRect);
+            var loadRect = new RectangleObject(0, 120, 100, 50, Color.FromRgb(50, 50, 50), "Load");
+            stage.menuObjects.Add(loadRect);
+            var settingsRect = new RectangleObject(0, 180, 100, 50, Color.FromRgb(50, 50, 50), "Settings");
+            stage.menuObjects.Add(settingsRect);
+            var exitRect = new RectangleObject(0, 240, 100, 50, Color.FromRgb(50, 50, 50), "Exit");
+            exitRect.OnClick += obj => ToggleExit();
+            stage.menuObjects.Add(exitRect);
             for (int i = 0; i < 10; i++)
             {
-                //stage.AddObject(new RectangleObject(random.Next(50, 750), random.Next(50, 550), 40, 20, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
-                //stage.AddObject(new TriangleObject(random.Next(50, 750), random.Next(50, 550), 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
-                //stage.AddObject(new TrapezoidObject(random.Next(50, 750), random.Next(50, 550), 50, 30, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
-                //stage.AddObject(new CircleObject(random.Next(50, 750), random.Next(50, 550), 15, random.Next(2, 4), random.Next(0, 360), random.Next(2, 6), random.Next(0, 360)));
                 stage.AddObject(new RectangleObject(
                     x: random.Next(50, 750),
                     y: random.Next(50, 550),
@@ -133,9 +142,17 @@ namespace arcanoid.GameLogic
             }
             isFullscreen = !isFullscreen;
         }
+        private void ToggleMenu()
+        {
+            isMenu = !isMenu;
+        }
         private void TogglePause()
         {
             isPaused = !isPaused;
+        }
+        private void ToggleExit()
+        {
+            mainWindow.Close();
         }
         private void EnsureObjectsWithinBounds()
         {
@@ -151,7 +168,7 @@ namespace arcanoid.GameLogic
         {
             while (isRunning)
             {
-                if (!isPaused)
+                if (!isPaused && !isMenu)
                 {
                     double width = 0, height = 0;
 
