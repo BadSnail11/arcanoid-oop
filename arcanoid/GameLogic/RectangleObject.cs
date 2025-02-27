@@ -29,7 +29,9 @@ namespace arcanoid.GameLogic
             {
                 Width = width,
                 Height = height,
-                Fill = color
+                Fill = color,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
             };
         }
         public override void Draw(Canvas canvas)

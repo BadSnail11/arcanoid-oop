@@ -30,7 +30,9 @@ namespace arcanoid.GameLogic
                     new System.Windows.Point(width * 0.75, 0),
                     new System.Windows.Point(width, height),
                     new System.Windows.Point(0, height)
-                }
+                },
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
             };
         }
 

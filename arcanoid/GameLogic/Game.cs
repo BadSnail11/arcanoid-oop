@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Windows.Shapes;
 
 namespace arcanoid.GameLogic
 {
@@ -15,6 +17,7 @@ namespace arcanoid.GameLogic
     {
         private Stage stage;
         private bool isRunning = false;
+        private bool isPaused = true;
         private DispatcherTimer renderTimer;
         private Thread physicsThread;
         private Random random = new Random();
@@ -35,6 +38,7 @@ namespace arcanoid.GameLogic
             renderTimer.Tick += (s, e) => { stage.Draw(); };
             InitializeObjects();
 
+
             mainWindow.SizeChanged += (s, e) =>
             {
                 gameCanvas.Width = mainWindow.Width;
@@ -47,6 +51,10 @@ namespace arcanoid.GameLogic
                 if (e.Key == Key.F)
                 {
                     ToggleFullscreen();
+                }
+                else if (e.Key == Key.P)
+                {
+                    TogglePause();
                 }
             };
         }
@@ -74,6 +82,10 @@ namespace arcanoid.GameLogic
             }
             isFullscreen = !isFullscreen;
         }
+        private void TogglePause()
+        {
+            isPaused = !isPaused;
+        }
         private void EnsureObjectsWithinBounds()
         {
             foreach (var obj in stage.objects)
@@ -88,15 +100,18 @@ namespace arcanoid.GameLogic
         {
             while (isRunning)
             {
-                double width = 0, height = 0;
-
-                gameCanvas.Dispatcher.Invoke(() =>
+                if (!isPaused)
                 {
-                    width = gameCanvas.Width;
-                    height = gameCanvas.Height;
-                });
+                    double width = 0, height = 0;
 
-                stage.Update(width, height);
+                    gameCanvas.Dispatcher.Invoke(() =>
+                    {
+                        width = gameCanvas.Width;
+                        height = gameCanvas.Height;
+                    });
+
+                    stage.Update(width, height);
+                }
                 Thread.Sleep(16); // 60 FPS
             }
         }

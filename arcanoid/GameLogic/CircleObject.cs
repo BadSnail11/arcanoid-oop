@@ -27,7 +27,9 @@ namespace arcanoid.GameLogic
             {
                 Width = Radius * 2,
                 Height = Radius * 2,
-                Fill = color
+                Fill = color,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
             };
         }
 
