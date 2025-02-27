@@ -77,10 +77,15 @@ namespace arcanoid.GameLogic
         {
             if (!canvas.Children.Contains(rectangle))
                 canvas.Children.Add(rectangle);
-            if (!(textBlock is null) && !canvas.Children.Contains(textBlock))
-                canvas.Children.Add(textBlock);
             Canvas.SetLeft(rectangle, X);
             Canvas.SetTop(rectangle, Y);
+            if (!(textBlock is null))
+            {
+                if (!canvas.Children.Contains(textBlock))
+                    canvas.Children.Add(textBlock);
+                Canvas.SetLeft(textBlock!, X);
+                Canvas.SetTop(textBlock!, Y);
+            }
         }
     }
 }

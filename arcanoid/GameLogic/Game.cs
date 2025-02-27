@@ -27,14 +27,19 @@ namespace arcanoid.GameLogic
         private Window mainWindow;
         private bool isFullscreen = false;
         private bool useAcceleration = false;
+        private bool isMenu = false;
 
         public Game(Window window, Canvas gameCanvas)
         {
             this.gameCanvas = gameCanvas;
             this.mainWindow = window;
-            stage = new Stage(gameCanvas);
+            stage = new Stage(this.gameCanvas);
             renderTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(0.1) };
-            renderTimer.Tick += (s, e) => { stage.Draw(); };
+            renderTimer.Tick += (s, e) => {
+                this.gameCanvas.Children.Clear();
+                stage.Draw();
+                if (isMenu) stage.DrawMenu(gameCanvas.Width, gameCanvas.Height);
+            };
             InitializeObjects();
             ToggleFullscreen();
 
@@ -59,6 +64,10 @@ namespace arcanoid.GameLogic
                 else if (e.Key == Key.A)
                 {
                     useAcceleration = !useAcceleration;
+                }
+                else if (e.Key == Key.Escape)
+                {
+                    isMenu = !isMenu;
                 }
             };
         }
