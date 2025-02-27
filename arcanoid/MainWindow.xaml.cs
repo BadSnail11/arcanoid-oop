@@ -21,7 +21,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        game = new Game(GameCanvas);
+        game = new Game(this, GameCanvas);
         game.Start();
     }
 }

@@ -15,7 +15,7 @@ namespace arcanoid.GameLogic
         public Double Width { get; set; }
         public Double Height { get; set; }
         private Rectangle rectangle;
-        RectangleObject(double x, double y, double width, double height, double speed, double angle)
+        public RectangleObject(double x, double y, double width, double height, double speed, double angle)
         {
             X = x;
             Y = y;

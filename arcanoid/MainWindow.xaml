@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800">
     <Grid>
-        <Canvas Name="GameCanvas" Background="#fffdbf"/>
+        <Canvas Name="GameCanvas" Background="#fffdbf" Width="800" Height="600"/>
     </Grid>
 </Window>

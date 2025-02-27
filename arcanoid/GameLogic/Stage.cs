@@ -17,10 +17,10 @@ namespace arcanoid.GameLogic
         }
         public void AddObject(DisplayObject obj) => objects.Add(obj);
         public void RemoveObject(DisplayObject obj) => objects.Remove(obj);
-        public void Update()
+        public void Update(double canvasWidth, double canvasHeight)
         {
             foreach (var obj in objects)
-                obj.Move();
+                obj.Move(canvasWidth, canvasHeight);
         }
         public void Draw()
         {
