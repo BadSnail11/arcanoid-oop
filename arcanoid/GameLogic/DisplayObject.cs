@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -16,12 +18,35 @@ namespace arcanoid.GameLogic
         public Double Angle { get; set; }
         public Double Acceleration { get; set; }
         public Double AccelAngle { get; set; }
+
+        [JsonIgnore]
         public SolidColorBrush color { get; set; }
+        public int[] ColorArray
+        {
+            get => new int[] { color.Color.R, color.Color.G, color.Color.B };
+            set => color = new SolidColorBrush(Color.FromRgb((byte)value[0], (byte)value[1], (byte)value[2]));
+        }
 
         public event Action<DisplayObject> OnClick;
         protected void RaiseClickEvent()
         {
             OnClick?.Invoke(this);
+        }
+        public virtual string ToJson()
+        {
+            return JsonSerializer.Serialize(this, GetType());
+        }
+
+        public static DisplayObject FromJson(string json, string type)
+        {
+            return type switch
+            {
+                "RectangleObject" => JsonSerializer.Deserialize<RectangleObject>(json),
+                "TriangleObject" => JsonSerializer.Deserialize<TriangleObject>(json),
+                "TrapezoidObject" => JsonSerializer.Deserialize<TrapezoidObject>(json),
+                "CircleObject" => JsonSerializer.Deserialize<CircleObject>(json),
+                _ => null
+            };
         }
         public abstract void Draw(Canvas canvas);
         public virtual void Move(double width, double height, bool useAcceleration = false)

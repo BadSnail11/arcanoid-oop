@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -38,7 +39,10 @@ namespace arcanoid.GameLogic
                 StrokeThickness = 1
             };
         }
-
+        public override string ToJson()
+        {
+            return JsonSerializer.Serialize(this);
+        }
         public override void Draw(Canvas canvas)
         {
             if (!canvas.Children.Contains(trapezoid))

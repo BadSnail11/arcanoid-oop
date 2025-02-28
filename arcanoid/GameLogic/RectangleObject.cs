@@ -9,6 +9,7 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using static System.Net.Mime.MediaTypeNames;
 using System.Windows;
+using System.Text.Json;
 
 namespace arcanoid.GameLogic
 {
@@ -17,6 +18,7 @@ namespace arcanoid.GameLogic
         public Double Width { get; set; }
         public Double Height { get; set; }
         public string Text { get; set; }
+        public double borderSize { get => rectangle.StrokeThickness; set => rectangle.StrokeThickness = value; }
         private Rectangle rectangle;
         private TextBlock? textBlock;
         public RectangleObject(double x, double y, double width, double height, Color color, string text)
@@ -72,6 +74,10 @@ namespace arcanoid.GameLogic
                 StrokeThickness = 1
             };
             textBlock = null;
+        }
+        public override string ToJson()
+        {
+            return JsonSerializer.Serialize(this);
         }
         public override void Draw(Canvas canvas)
         {

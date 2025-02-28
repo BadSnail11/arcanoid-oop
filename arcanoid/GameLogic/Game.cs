@@ -38,6 +38,7 @@ namespace arcanoid.GameLogic
             renderTimer.Tick += (s, e) => {
                 this.gameCanvas.Children.Clear();
                 stage.Draw();
+                stage.DrawBorder(gameCanvas.Width, (isFullscreen) ? gameCanvas.Height : gameCanvas.Height - 23);
                 if (isMenu) stage.DrawMenu(gameCanvas.Width, gameCanvas.Height);
             };
             InitializeObjects();
@@ -78,8 +79,10 @@ namespace arcanoid.GameLogic
             playRect.OnClick += obj => ToggleMenu();
             stage.menuObjects.Add(playRect);
             var saveRect = new RectangleObject(0, 60, 100, 50, Color.FromRgb(50, 50, 50), "Save");
+            saveRect.OnClick += obj => stage.SaveObjectsToFile("data.json");
             stage.menuObjects.Add(saveRect);
             var loadRect = new RectangleObject(0, 120, 100, 50, Color.FromRgb(50, 50, 50), "Load");
+            loadRect.OnClick += obj => stage.LoadObjectsFromFile("data.json");
             stage.menuObjects.Add(loadRect);
             var settingsRect = new RectangleObject(0, 180, 100, 50, Color.FromRgb(50, 50, 50), "Settings");
             stage.menuObjects.Add(settingsRect);
