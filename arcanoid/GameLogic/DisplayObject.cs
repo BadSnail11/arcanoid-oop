@@ -37,17 +37,20 @@ namespace arcanoid.GameLogic
             return JsonSerializer.Serialize(this, GetType());
         }
 
-        public static DisplayObject FromJson(string json, string type)
-        {
-            return type switch
-            {
-                "RectangleObject" => JsonSerializer.Deserialize<RectangleObject>(json),
-                "TriangleObject" => JsonSerializer.Deserialize<TriangleObject>(json),
-                "TrapezoidObject" => JsonSerializer.Deserialize<TrapezoidObject>(json),
-                "CircleObject" => JsonSerializer.Deserialize<CircleObject>(json),
-                _ => null
-            };
-        }
+        public abstract DisplayObject FromJson(string json);
+
+        //public static DisplayObject FromJson(string json, string type)
+        //{
+        //    return type switch
+        //    {
+        //        "RectangleObject" => JsonSerializer.Deserialize<RectangleObject>(json),
+        //        "TriangleObject" => JsonSerializer.Deserialize<TriangleObject>(json),
+        //        "TrapezoidObject" => JsonSerializer.Deserialize<TrapezoidObject>(json),
+        //        "CircleObject" => JsonSerializer.Deserialize<CircleObject>(json),
+        //        _ => null
+        //    };
+        //}
+        public abstract void ChangeBorder(Color color, double borderSize = 1);
         public abstract void Draw(Canvas canvas);
         public virtual void Move(double width, double height, bool useAcceleration = false)
         {

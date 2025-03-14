@@ -10,17 +10,37 @@ using System.Windows.Controls;
 using static System.Net.Mime.MediaTypeNames;
 using System.Windows;
 using System.Text.Json;
+using System.Windows.Media.Media3D;
+using System.Text.Json.Serialization;
 
 namespace arcanoid.GameLogic
 {
+    [Serializable]
     class RectangleObject : DisplayObject
     {
         public Double Width { get; set; }
         public Double Height { get; set; }
         public string Text { get; set; }
+        [JsonIgnore]
         public double borderSize { get => rectangle.StrokeThickness; set => rectangle.StrokeThickness = value; }
+        [JsonIgnore]
         private Rectangle rectangle;
+        [JsonIgnore]
         private TextBlock? textBlock;
+
+        private void initRect()
+        {
+            rectangle = new Rectangle
+            {
+                Width = this.Width,
+                Height = this.Height,
+                Fill = this.color,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            };
+        }
+
+        public RectangleObject() { }
         public RectangleObject(double x, double y, double width, double height, Color color, string text)
         {
             X = x;
@@ -34,14 +54,7 @@ namespace arcanoid.GameLogic
             Acceleration = 0;
             AccelAngle = 0;
 
-            rectangle = new Rectangle
-            {
-                Width = width,
-                Height = height,
-                Fill = this.color,
-                Stroke = Brushes.Black,
-                StrokeThickness = 1
-            };
+            initRect();
             textBlock = new TextBlock
             {
                 Text = this.Text,
@@ -75,12 +88,27 @@ namespace arcanoid.GameLogic
             };
             textBlock = null;
         }
+        public override void ChangeBorder(Color color, double borderSize = 1)
+        {
+            if (rectangle == null)
+                initRect();
+            rectangle.Stroke = new SolidColorBrush(color);
+            rectangle.StrokeThickness = borderSize;
+        }
         public override string ToJson()
         {
             return JsonSerializer.Serialize(this);
         }
+        public override DisplayObject FromJson(string json)
+        {
+            return JsonSerializer.Deserialize<RectangleObject>(json);
+        }
         public override void Draw(Canvas canvas)
         {
+            if (rectangle == null)
+            {
+                initRect();
+            }
             if (!canvas.Children.Contains(rectangle))
                 canvas.Children.Add(rectangle);
             if (rectangle.Tag == null)

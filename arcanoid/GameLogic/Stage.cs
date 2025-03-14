@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.IO;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace arcanoid.GameLogic
 {
@@ -31,34 +32,115 @@ namespace arcanoid.GameLogic
         {
             objects.Clear();
         }
-        public void SaveObjectsToFile(string filename)
+        public void SaveObjectsToFile()
         {
-            var objectsData = objects.Select(obj => new
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Type = obj.GetType().Name,
-                Json = obj.ToJson()
-            }).ToList();
+                Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+                DefaultExt = "json",
+                Title = "Сохранить игру"
+            };
 
-            string json = JsonSerializer.Serialize(objectsData, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(filename, json);
-        }
-        public void LoadObjectsFromFile(string filename)
-        {
-            if (!File.Exists(filename)) return;
-
-            string json = File.ReadAllText(filename);
-            var objectsData = JsonSerializer.Deserialize<List<dynamic>>(json);
-
-            ClearObjects();
-
-            foreach (var objData in objectsData)
+            //if (saveFileDialog.ShowDialog() == true)
+            //{
+            //    string json = JsonSerializer.Serialize(stage.Objects, new JsonSerializerOptions { WriteIndented = true });
+            //    File.WriteAllText(saveFileDialog.FileName, json);
+            //}
+            //var objectsData = objects.Select(obj => new
+            //{
+            //    Type = obj.GetType().Name,
+            //    Json = obj
+            //}).ToList();
+            var objectsData = new List<object>();
+            foreach (var obj in objects)
             {
-                string jsonString = objData.Json.GetRawText();
-                string typeString = objData.Type.GetString();
-
-                DisplayObject obj = DisplayObject.FromJson(jsonString, typeString);
-                if (obj != null) AddObject(obj);
+                var type = obj.GetType().Name;
+                if (type == "RectangleObject")
+                {
+                    var newObject = (RectangleObject)obj;
+                    objectsData.Add(new
+                    {
+                        Type = obj.GetType().Name,
+                        Json = newObject
+                    });
+                } else if (type == "CircleObject")
+                {
+                    var newObject = (CircleObject)obj;
+                    objectsData.Add(new
+                    {
+                        Type = obj.GetType().Name,
+                        Json = newObject
+                    });
+                } else if (type == "TrapezoidObject")
+                {
+                    var newObject = (TrapezoidObject)obj;
+                    objectsData.Add(new
+                    {
+                        Type = obj.GetType().Name,
+                        Json = newObject
+                    });
+                }
+                else if (type == "TriangleObject")
+                {
+                    var newObject = (TriangleObject)obj;
+                    objectsData.Add(new
+                    {
+                        Type = obj.GetType().Name,
+                        Json = newObject
+                    });
+                }
             }
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string json = JsonSerializer.Serialize(objectsData, new JsonSerializerOptions { WriteIndented = false });
+                File.WriteAllText(saveFileDialog.FileName, json);
+            }
+        }
+        public void LoadObjectsFromFile()
+        {
+            //if (!File.Exists(filename)) return;
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+                Title = "Загрузить игру"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string json = File.ReadAllText(openFileDialog.FileName);
+                var objectsData = JsonSerializer.Deserialize<List<dynamic>>(json);
+
+                ClearObjects();
+
+                foreach (var objData in objectsData)
+                {
+                    string jsonString = objData.GetProperty("Json").GetRawText();
+                    string typeString = objData.GetProperty("Type").GetString();
+
+                    DisplayObject obj;
+                    switch (typeString)
+                    {
+                        case "RectangleObject":
+                            obj = new RectangleObject().FromJson(jsonString);
+                            break;
+                        case "TriangleObject":
+                            obj = new TriangleObject().FromJson(jsonString);
+                            break;
+                        case "TrapezoidObject":
+                            obj = new TrapezoidObject().FromJson(jsonString);
+                            break;
+                        case "CircleObject":
+                            obj = new CircleObject().FromJson(jsonString);
+                            break;
+                        default:
+                            obj = null;
+                            break;
+                    };
+                    //DisplayObject obj = DisplayObject.FromJson(jsonString, typeString);
+                    if (obj != null) AddObject(obj);
+                }
+            }
+
         }
         public void Update(double canvasWidth, double canvasHeight, bool useAcceleration)
         {
@@ -91,6 +173,7 @@ namespace arcanoid.GameLogic
             {
                 obj.Draw(canvas);
             }
+            var a = 0;
         }
     }
 }

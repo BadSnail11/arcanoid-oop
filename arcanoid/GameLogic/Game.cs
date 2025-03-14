@@ -41,8 +41,8 @@ namespace arcanoid.GameLogic
                 stage.DrawBorder(gameCanvas.Width, (isFullscreen) ? gameCanvas.Height : gameCanvas.Height - 23);
                 if (isMenu) stage.DrawMenu(gameCanvas.Width, gameCanvas.Height);
             };
-            InitializeObjects();
             ToggleFullscreen();
+            InitializeObjects();
 
 
             mainWindow.SizeChanged += (s, e) =>
@@ -79,10 +79,10 @@ namespace arcanoid.GameLogic
             playRect.OnClick += obj => ToggleMenu();
             stage.menuObjects.Add(playRect);
             var saveRect = new RectangleObject(0, 60, 100, 50, Color.FromRgb(50, 50, 50), "Save");
-            saveRect.OnClick += obj => stage.SaveObjectsToFile("data.json");
+            saveRect.OnClick += obj => stage.SaveObjectsToFile();
             stage.menuObjects.Add(saveRect);
             var loadRect = new RectangleObject(0, 120, 100, 50, Color.FromRgb(50, 50, 50), "Load");
-            loadRect.OnClick += obj => stage.LoadObjectsFromFile("data.json");
+            loadRect.OnClick += obj => stage.LoadObjectsFromFile();
             stage.menuObjects.Add(loadRect);
             var settingsRect = new RectangleObject(0, 180, 100, 50, Color.FromRgb(50, 50, 50), "Settings");
             stage.menuObjects.Add(settingsRect);
@@ -92,8 +92,8 @@ namespace arcanoid.GameLogic
             for (int i = 0; i < 10; i++)
             {
                 stage.AddObject(new RectangleObject(
-                    x: random.Next(50, 750),
-                    y: random.Next(50, 550),
+                    x: random.Next(50, 1800),
+                    y: random.Next(50, 1000),
                     width: random.Next(20, 80),
                     height: random.Next(20, 80),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
@@ -102,8 +102,8 @@ namespace arcanoid.GameLogic
                     acceleration: random.Next(2, 6),
                     accelAngle: random.Next(0, 360)));
                 stage.AddObject(new TriangleObject(
-                    x: random.Next(50, 750),
-                    y: random.Next(50, 550),
+                    x: random.Next(50, 1800),
+                    y: random.Next(50, 1000),
                     size: random.Next(20, 60),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
                     speed: random.Next(2, 4),
@@ -111,8 +111,8 @@ namespace arcanoid.GameLogic
                     acceleration: random.Next(2, 6),
                     accelAngle: random.Next(0, 360)));
                 stage.AddObject(new TrapezoidObject(
-                    x: random.Next(50, 750),
-                    y: random.Next(50, 550),
+                    x: random.Next(50, 1800),
+                    y: random.Next(50, 1000),
                     width: random.Next(20, 80),
                     height: random.Next(20, 80),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
@@ -121,8 +121,8 @@ namespace arcanoid.GameLogic
                     acceleration: random.Next(2, 6),
                     accelAngle: random.Next(0, 360)));
                 stage.AddObject(new CircleObject(
-                    x: random.Next(50, 750),
-                    y: random.Next(50, 550),
+                    x: random.Next(50, 1800),
+                    y: random.Next(50, 1000),
                     radius: random.Next(15, 40),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
                     speed: random.Next(2, 4),
