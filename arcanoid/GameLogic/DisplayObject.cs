@@ -65,8 +65,8 @@ namespace arcanoid.GameLogic
                 vy += Acceleration / 20 * Math.Sin(accelRadians);
 
                 Speed = Math.Sqrt(vx * vx + vy * vy);
-                if (Speed > 6)
-                    Speed = 6;
+                if (Speed > 40)
+                    Speed = 40;
                 Angle = Math.Atan2(vy, vx) * 180 / Math.PI;
             }
 

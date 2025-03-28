@@ -28,6 +28,7 @@ namespace arcanoid.GameLogic
         private bool isFullscreen = false;
         private bool useAcceleration = false;
         private bool isMenu = false;
+        private bool isSettings = false;
 
         public Game(Window window, Canvas gameCanvas)
         {
@@ -39,7 +40,8 @@ namespace arcanoid.GameLogic
                 this.gameCanvas.Children.Clear();
                 stage.Draw();
                 stage.DrawBorder(gameCanvas.Width, (isFullscreen) ? gameCanvas.Height : gameCanvas.Height - 23);
-                if (isMenu) stage.DrawMenu(gameCanvas.Width, gameCanvas.Height);
+                if (isMenu && !isSettings) stage.DrawMenu(gameCanvas.Width, gameCanvas.Height);
+                if (isSettings) stage.DrawSettings(gameCanvas.Width, gameCanvas.Height);
             };
             ToggleFullscreen();
             InitializeObjects();
@@ -74,6 +76,7 @@ namespace arcanoid.GameLogic
         }
         private void InitializeObjects()
         {
+            // меню
             stage.menuObjects.Add(new RectangleObject(0, 0, 150, 320, Color.FromRgb(100, 100, 100), ""));
             var playRect = new RectangleObject(0, 0, 100, 50, Color.FromRgb(50, 50, 50), "Play");
             playRect.OnClick += obj => ToggleMenu();
@@ -85,10 +88,30 @@ namespace arcanoid.GameLogic
             loadRect.OnClick += obj => stage.LoadObjectsFromFile();
             stage.menuObjects.Add(loadRect);
             var settingsRect = new RectangleObject(0, 180, 100, 50, Color.FromRgb(50, 50, 50), "Settings");
+            settingsRect.OnClick += obj => ToggleSetings();
             stage.menuObjects.Add(settingsRect);
             var exitRect = new RectangleObject(0, 240, 100, 50, Color.FromRgb(50, 50, 50), "Exit");
             exitRect.OnClick += obj => ToggleExit();
             stage.menuObjects.Add(exitRect);
+
+            // настройки
+            stage.settingsObjects.Add(new RectangleObject(0, 0, 150, 320, Color.FromRgb(100, 100, 100), ""));
+            var decsriptionRect = new RectangleObject(0, 60, 100, 50, Color.FromRgb(50, 50, 50), "Choose back");
+            stage.settingsObjects.Add(decsriptionRect);
+            var color1 = new RectangleObject(0, 0, 100, 50, Color.FromRgb(255, 253, 191), "");
+            color1.OnClick += obj => ChangeBackground(Color.FromRgb(255, 253, 191));
+            stage.settingsObjects.Add(color1);
+            var color2 = new RectangleObject(0, 0, 100, 50, Color.FromRgb(176, 210, 255), "");
+            color2.OnClick += obj => ChangeBackground(Color.FromRgb(176, 210, 255));
+            stage.settingsObjects.Add(color2);
+            var color3 = new RectangleObject(0, 0, 100, 50, Color.FromRgb(233, 181, 255), "");
+            color3.OnClick += obj => ChangeBackground(Color.FromRgb(233, 181, 255));
+            stage.settingsObjects.Add(color3);
+            var backRect = new RectangleObject(0, 60, 100, 50, Color.FromRgb(50, 50, 50), "Back");
+            backRect.OnClick += obj => ToggleSetings();
+            stage.settingsObjects.Add(backRect);
+
+            // игровые объекты
             for (int i = 0; i < 10; i++)
             {
                 stage.AddObject(new RectangleObject(
@@ -97,18 +120,18 @@ namespace arcanoid.GameLogic
                     width: random.Next(20, 80),
                     height: random.Next(20, 80),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
-                    speed: random.Next(2, 4),
+                    speed: random.Next(10, 15),
                     angle: random.Next(0, 360),
-                    acceleration: random.Next(2, 6),
+                    acceleration: random.Next(6, 10),
                     accelAngle: random.Next(0, 360)));
                 stage.AddObject(new TriangleObject(
                     x: random.Next(50, 1800),
                     y: random.Next(50, 1000),
                     size: random.Next(20, 60),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
-                    speed: random.Next(2, 4),
+                    speed: random.Next(10, 15),
                     angle: random.Next(0, 360),
-                    acceleration: random.Next(2, 6),
+                    acceleration: random.Next(6, 10),
                     accelAngle: random.Next(0, 360)));
                 stage.AddObject(new TrapezoidObject(
                     x: random.Next(50, 1800),
@@ -116,18 +139,18 @@ namespace arcanoid.GameLogic
                     width: random.Next(20, 80),
                     height: random.Next(20, 80),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
-                    speed: random.Next(2, 4),
+                    speed: random.Next(10, 15),
                     angle: random.Next(0, 360),
-                    acceleration: random.Next(2, 6),
+                    acceleration: random.Next(6, 10),
                     accelAngle: random.Next(0, 360)));
                 stage.AddObject(new CircleObject(
                     x: random.Next(50, 1800),
                     y: random.Next(50, 1000),
                     radius: random.Next(15, 40),
                     color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
-                    speed: random.Next(2, 4),
+                    speed: random.Next(10, 15),
                     angle: random.Next(0, 360),
-                    acceleration: random.Next(2, 6),
+                    acceleration: random.Next(6, 10),
                     accelAngle: random.Next(0, 360)));
             }
         }
@@ -148,6 +171,12 @@ namespace arcanoid.GameLogic
         private void ToggleMenu()
         {
             isMenu = !isMenu;
+            if (isSettings)
+                isSettings = !isSettings;
+        }
+        private void ToggleSetings()
+        {
+            isSettings = !isSettings;
         }
         private void TogglePause()
         {
@@ -156,6 +185,10 @@ namespace arcanoid.GameLogic
         private void ToggleExit()
         {
             mainWindow.Close();
+        }
+        private void ChangeBackground(Color color)
+        {
+            gameCanvas.Background = new SolidColorBrush(color);
         }
         private void EnsureObjectsWithinBounds()
         {

@@ -17,6 +17,7 @@ namespace arcanoid.GameLogic
     {
         public List<DisplayObject> objects = new List<DisplayObject>();
         public List<DisplayObject> menuObjects = new List<DisplayObject>();
+        public List<DisplayObject> settingsObjects = new List<DisplayObject>();
         //public List<DisplayObject> gameObjects = new List<DisplayObject>();
         public RectangleObject border;
         private Canvas canvas;
@@ -37,6 +38,7 @@ namespace arcanoid.GameLogic
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+                InitialDirectory = @"C:\Users\Public\Documents\saves",
                 DefaultExt = "json",
                 Title = "Сохранить игру"
             };
@@ -102,6 +104,7 @@ namespace arcanoid.GameLogic
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+                InitialDirectory = @"C:\Users\Public\Documents\saves",
                 Title = "Загрузить игру"
             };
 
@@ -161,10 +164,25 @@ namespace arcanoid.GameLogic
                 obj.Draw(canvas);
             }
         }
+        public void DrawSettings(double canvasWidth, double canvasHeight)
+        {
+            var obj = settingsObjects[0];
+            obj.X = canvasWidth / 2 - 75;
+            obj.Y = canvasHeight / 2 - 215;
+            obj.Draw(canvas);
+            for (int i = 1; i < settingsObjects.Count; i++)
+            {
+                obj = settingsObjects[i];
+                obj.X = canvasWidth / 2 - 50;
+                obj.Y = canvasHeight / 2 - 200 + (60 * (i - 1));
+                obj.Draw(canvas);
+            }
+        }
         public void DrawBorder(double width, double height)
         {
             border = new RectangleObject(0, 0, width - 12, height - 13, Color.FromArgb(0, 255, 255, 255), "");
-            border.borderSize = 10;
+            //border.borderSize = 10;
+            border.ChangeBorder(Color.FromRgb(0, 0, 255), 10);
             border.Draw(canvas);
         }
         public void Draw()

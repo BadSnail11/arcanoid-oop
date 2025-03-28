@@ -21,8 +21,7 @@ namespace arcanoid.GameLogic
         public Double Width { get; set; }
         public Double Height { get; set; }
         public string Text { get; set; }
-        [JsonIgnore]
-        public double borderSize { get => rectangle.StrokeThickness; set => rectangle.StrokeThickness = value; }
+        //public double borderSize { get => rectangle.StrokeThickness; set => rectangle.StrokeThickness = value; }
         [JsonIgnore]
         private Rectangle rectangle;
         [JsonIgnore]
