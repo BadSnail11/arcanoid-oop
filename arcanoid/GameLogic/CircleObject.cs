@@ -34,6 +34,10 @@ namespace arcanoid.GameLogic
             X = x;
             Y = y;
             Radius = radius;
+            HitX = X - Radius;
+            HitY = Y - Radius;
+            HitW = Radius * 2;
+            HitH = Radius * 2;
             Speed = speed;
             Angle = angle;
             Acceleration = acceleration;

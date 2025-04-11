@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows;
 
 namespace arcanoid.GameLogic
 {
@@ -18,6 +19,14 @@ namespace arcanoid.GameLogic
         public Double Angle { get; set; }
         public Double Acceleration { get; set; }
         public Double AccelAngle { get; set; }
+        protected Double HitX { get; set; }
+        protected Double HitY { get; set; }
+        protected Double HitW { get; set; }
+        protected Double HitH { get; set; }
+        public Rect HitBox
+        {
+            get => new Rect(HitX, HitY, HitW, HitH);
+        }
 
         [JsonIgnore]
         public SolidColorBrush color { get; set; }
