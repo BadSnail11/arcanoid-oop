@@ -25,7 +25,7 @@ namespace arcanoid.GameLogic
         public Double HitH { get; set; }
         public Rect HitBox
         {
-            get => new Rect(HitX, HitY, HitW, HitH);
+            get => new Rect(HitX - 5, HitY - 5, HitW + 10, HitH + 10);
         }
 
         [JsonIgnore]

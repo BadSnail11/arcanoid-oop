@@ -244,100 +244,122 @@ namespace arcanoid.GameLogic
         {
             while (isRunning)
             {
-                for (int i = 0; i < collisionQueue.Count; i += 2)
+                for (int i = 0; i < stage.objects.Count; i++)
                 {
-                    var obj1 = collisionQueue[i];
-                    var obj2 = collisionQueue[i + 1];
-                    if (obj1 is CircleObject circle1 && obj2 is CircleObject circle2)
+                    for (int j = 0; j < stage.objects.Count; j++)
                     {
-                        double dx = circle2.X - circle1.X;
-                        double dy = circle2.Y - circle1.Y;
-                        double distance = Math.Sqrt(dx * dx + dy * dy);
-                        double minDistance = circle1.Radius + circle2.Radius;
+                        if (i == j) continue;
+                        var obj1 = stage.objects[i] as CircleObject;
+                        var obj2 = stage.objects[j] as CircleObject;
 
-                        if (distance < minDistance && distance >= 0)
+                        if (obj1 != null && obj2 != null)
                         {
-                            // Смещение чтобы избежать повторного столкновения
-                            double overlap = minDistance - distance;
-                            double shiftX = overlap * dx / distance / 2;
-                            double shiftY = overlap * dy / distance / 2;
+                            // Исходные положения (t=0)
+                            double x11 = obj1.X;
+                            double y11 = obj1.Y;
+                            double x21 = obj2.X;
+                            double y21 = obj2.Y;
 
-                            circle1.X -= shiftX;
-                            circle1.HitX -= shiftX;
-                            circle1.Y -= shiftY;
-                            circle1.HitY -= shiftY;
-                            circle2.X += shiftX;
-                            circle2.HitX += shiftX;
-                            circle2.Y += shiftY;
-                            circle2.HitY += shiftY;
+                            // Конечные положения (t=1)
+                            double x12 = x11 + obj1.Speed * Math.Cos(obj1.Angle * Math.PI / 180);
+                            double y12 = y11 + obj1.Speed * Math.Sin(obj1.Angle * Math.PI / 180);
+                            double x22 = x21 + obj2.Speed * Math.Cos(obj2.Angle * Math.PI / 180);
+                            double y22 = y21 + obj2.Speed * Math.Sin(obj2.Angle * Math.PI / 180);
 
-                            // Обмен скоростями
-                            double angle1 = circle1.Angle * Math.PI / 180;
-                            double angle2 = circle2.Angle * Math.PI / 180;
+                            // Вычисляем коэффициенты квадратного уравнения
+                            double a = x11 * x11 + x12 * x12 + y11 * y11 + y12 * y12 +
+                                      x21 * x21 + x22 * x22 + y21 * y21 + y22 * y22 +
+                                      2 * (-x11 * x12 - x21 * x22 - y11 * y12 - y21 * y22 -
+                                          x11 * x21 - y11 * y21 + x11 * x22 + y11 * y22 +
+                                          x12 * x21 + y12 * y21 - x12 * x22 - y12 * y22);
 
-                            double nx = dx / distance;
-                            double ny = dy / distance;
-                            double tx = -ny;
-                            double ty = nx;
+                            double b = 2 * (-x11 * x11 - x21 * x21 - y11 * y11 - y21 * y21 +
+                                          x11 * x12 + y11 * y12 + x21 * x22 + y21 * y22 -
+                                          x11 * x22 - y11 * y22 - x12 * x21 - y12 * y21 +
+                                          2 * x11 * x21 + 2 * y11 * y21);
 
-                            double vx1 = circle1.Speed * Math.Cos(angle1);
-                            double vy1 = circle1.Speed * Math.Sin(angle1);
-                            double vx2 = circle2.Speed * Math.Cos(angle2);
-                            double vy2 = circle2.Speed * Math.Sin(angle2);
+                            double c = x11 * x11 - 2 * x11 * x21 + x21 * x21 +
+                                      y11 * y11 - 2 * y11 * y21 + y21 * y21 -
+                                      (obj1.Radius + obj2.Radius) * (obj1.Radius + obj2.Radius);
 
-                            double dpTan1 = vx1 * tx + vy1 * ty;
-                            double dpTan2 = vx2 * tx + vy2 * ty;
+                            // Решаем квадратное уравнение
+                            double discriminant = b * b - 4 * a * c;
 
-                            double dpNorm1 = vx1 * nx + vy1 * ny;
-                            double dpNorm2 = vx2 * nx + vy2 * ny;
+                            if (discriminant >= 0 && a != 0)
+                            {
+                                double sqrtDiscriminant = Math.Sqrt(discriminant);
+                                double t1 = (-b + sqrtDiscriminant) / (2 * a);
+                                double t2 = (-b - sqrtDiscriminant) / (2 * a);
 
-                            double m1 = dpNorm2;
-                            double m2 = dpNorm1;
+                                // Нас интересуют только решения в интервале [0, 1]
+                                List<double> validTs = new List<double>();
+                                if (t1 >= 0 && t1 <= 1) validTs.Add(t1);
+                                if (t2 >= 0 && t2 <= 1) validTs.Add(t2);
 
-                            vx1 = tx * dpTan1 + nx * m1;
-                            vy1 = ty * dpTan1 + ny * m1;
-                            vx2 = tx * dpTan2 + nx * m2;
-                            vy2 = ty * dpTan2 + ny * m2;
+                                if (validTs.Count > 0)
+                                {
+                                    // Берем наименьшее t (первое столкновение)
+                                    double t = validTs.Min();
 
-                            //circle1.Speed = Math.Sqrt(vx1 * vx1 + vy1 * vy1);
-                            circle1.Angle = Math.Atan2(vy1, vx1) * 180 / Math.PI;
+                                    // Вычисляем положения в момент столкновения
+                                    double x1 = x11 + (x12 - x11) * t;
+                                    double y1 = y11 + (y12 - y11) * t;
+                                    double x2 = x21 + (x22 - x21) * t;
+                                    double y2 = y21 + (y22 - y21) * t;
 
-                            //circle2.Speed = Math.Sqrt(vx2 * vx2 + vy2 * vy2);
-                            circle2.Angle = Math.Atan2(vy2, vx2) * 180 / Math.PI;
+                                    // Вектор между центрами в момент столкновения
+                                    double nx = x2 - x1;
+                                    double ny = y2 - y1;
+                                    double distance = Math.Sqrt(nx * nx + ny * ny);
+                                    nx /= distance;
+                                    ny /= distance;
 
-                            //double width = 0, height = 0;
+                                    // Тангенциальные компоненты
+                                    double tx = -ny;
+                                    double ty = nx;
 
-                            //gameCanvas.Dispatcher.Invoke(() =>
-                            //{
-                            //    width = gameCanvas.Width;
-                            //    height = gameCanvas.Height;
-                            //});
+                                    // Разлагаем скорости на нормальные и тангенциальные компоненты
+                                    double v1x = obj1.Speed * Math.Cos(obj1.Angle * Math.PI / 180);
+                                    double v1y = obj1.Speed * Math.Sin(obj1.Angle * Math.PI / 180);
+                                    double v2x = obj2.Speed * Math.Cos(obj2.Angle * Math.PI / 180);
+                                    double v2y = obj2.Speed * Math.Sin(obj2.Angle * Math.PI / 180);
 
-                            //circle1.Move(width, height, useAcceleration);
-                            //circle1.Move(width, height, useAcceleration);
+                                    // Проекции на нормаль и тангенс
+                                    double v1n = v1x * nx + v1y * ny;
+                                    double v1t = v1x * tx + v1y * ty;
+                                    double v2n = v2x * nx + v2y * ny;
+                                    double v2t = v2x * tx + v2y * ty;
+
+                                    // Обмен нормальными компонентами скоростей
+                                    double v1nAfter = v2n;
+                                    double v2nAfter = v1n;
+
+                                    // Собираем новые скорости
+                                    double v1xAfter = v1nAfter * nx + v1t * tx;
+                                    double v1yAfter = v1nAfter * ny + v1t * ty;
+                                    double v2xAfter = v2nAfter * nx + v2t * tx;
+                                    double v2yAfter = v2nAfter * ny + v2t * ty;
+
+                                    // Обновляем скорости и углы объектов
+                                    //obj1.Speed = Math.Sqrt(v1xAfter * v1xAfter + v1yAfter * v1yAfter);
+                                    obj1.Angle = Math.Atan2(v1yAfter, v1xAfter) * 180 / Math.PI;
+                                    //obj2.Speed = Math.Sqrt(v2xAfter * v2xAfter + v2yAfter * v2yAfter);
+                                    obj2.Angle = Math.Atan2(v2yAfter, v2xAfter) * 180 / Math.PI;
+
+                                    // Корректируем положения, чтобы избежать залипания
+                                    double overlap = (obj1.Radius + obj2.Radius) - distance;
+                                    double shiftX = overlap * nx / 2;
+                                    double shiftY = overlap * ny / 2;
+
+                                    obj1.X = x1 - shiftX;
+                                    obj1.Y = y1 - shiftY;
+                                    obj2.X = x2 + shiftX;
+                                    obj2.Y = y2 + shiftY;
+                                }
+                            }
                         }
                     }
-                    else
-                    {
-                        double angle1 = obj1.Angle * Math.PI / 180;
-                        double angle2 = obj2.Angle * Math.PI / 180;
-
-                        double vx1 = obj1.Speed * Math.Cos(angle1);
-                        double vy1 = obj1.Speed * Math.Sin(angle1);
-                        double vx2 = obj2.Speed * Math.Cos(angle2);
-                        double vy2 = obj2.Speed * Math.Sin(angle2);
-
-                        //obj1.Speed = Math.Sqrt(vx2 * vx2 + vy2 * vy2);
-                        obj1.Angle = Math.Atan2(vy2, vx2) * 180 / Math.PI;
-
-                        //obj2.Speed = Math.Sqrt(vx1 * vx1 + vy1 * vy1);
-                        obj2.Angle = Math.Atan2(vy1, vx1) * 180 / Math.PI;
-
-
-                        //stage.Update(width, height, useAcceleration);
-                    }
                 }
-                collisionQueue.Clear();
                 Thread.Sleep(16);
             }
         }

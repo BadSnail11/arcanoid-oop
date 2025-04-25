@@ -35,8 +35,8 @@ namespace arcanoid.GameLogic
             X = x;
             Y = y;
             Radius = radius;
-            HitX = X;
-            HitY = Y;
+            HitX = X - radius;
+            HitY = Y - radius;
             HitW = Radius * 2;
             HitH = Radius * 2;
             Speed = speed;
@@ -74,27 +74,27 @@ namespace arcanoid.GameLogic
             Canvas.SetLeft(circle, X - Radius);
             Canvas.SetTop(circle, Y - Radius);
             // Отображение красной точки в центре круга
-            //Ellipse centerDot = new Ellipse
-            //{
-            //    Width = 4,
-            //    Height = 4,
-            //    Fill = Brushes.Red
-            //};
-            //Canvas.SetLeft(centerDot, X - 2);
-            //Canvas.SetTop(centerDot, Y - 2);
-            //canvas.Children.Add(centerDot);
+            Ellipse centerDot = new Ellipse
+            {
+                Width = 4,
+                Height = 4,
+                Fill = Brushes.Red
+            };
+            Canvas.SetLeft(centerDot, X - 2);
+            Canvas.SetTop(centerDot, Y - 2);
+            canvas.Children.Add(centerDot);
 
-            //Rectangle hitbox = new Rectangle
-            //{
-            //    Width = HitW,
-            //    Height = HitH,
-            //    Stroke = Brushes.Red,
-            //    StrokeDashArray = new DoubleCollection { 2 },
-            //    StrokeThickness = 1
-            //};
-            //Canvas.SetLeft(hitbox, HitX - Radius);
-            //Canvas.SetTop(hitbox, HitY - Radius);
-            //canvas.Children.Add(hitbox);
+            Rectangle hitbox = new Rectangle
+            {
+                Width = HitW + 10,
+                Height = HitH + 10,
+                Stroke = Brushes.Red,
+                StrokeDashArray = new DoubleCollection { 2 },
+                StrokeThickness = 1
+            };
+            Canvas.SetLeft(hitbox, HitX - 5);
+            Canvas.SetTop(hitbox, HitY - 5);
+            canvas.Children.Add(hitbox);
         }
     }
 }
