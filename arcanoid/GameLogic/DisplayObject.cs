@@ -19,10 +19,10 @@ namespace arcanoid.GameLogic
         public Double Angle { get; set; }
         public Double Acceleration { get; set; }
         public Double AccelAngle { get; set; }
-        protected Double HitX { get; set; }
-        protected Double HitY { get; set; }
-        protected Double HitW { get; set; }
-        protected Double HitH { get; set; }
+        public Double HitX { get; set; }
+        public Double HitY { get; set; }
+        public Double HitW { get; set; }
+        public Double HitH { get; set; }
         public Rect HitBox
         {
             get => new Rect(HitX, HitY, HitW, HitH);
@@ -81,12 +81,14 @@ namespace arcanoid.GameLogic
 
             X += vx;
             Y += vy;
+            HitX += vx;
+            HitY += vy;
 
             // Проверка границ и отражение
-            if (X < 0) { X = 0; Angle = 180 - Angle; }
-            if (X > width) { X = width; Angle = 180 - Angle; }
-            if (Y < 0) { Y = 0; Angle = -Angle; }
-            if (Y > height) { Y = height; Angle = -Angle; }
+            if (X < 0) { X = 0; HitX = 0 ; Angle = 180 - Angle; }
+            if (X > width) { X = width; HitX = width; Angle = 180 - Angle; }
+            if (Y < 0) { Y = 0; HitY = 0 ; Angle = -Angle; }
+            if (Y > height) { Y = height; HitY = height ; Angle = -Angle; }
         }
     }
 }

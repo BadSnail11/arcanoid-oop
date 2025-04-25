@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
 namespace arcanoid.GameLogic
@@ -34,8 +35,8 @@ namespace arcanoid.GameLogic
             X = x;
             Y = y;
             Radius = radius;
-            HitX = X - Radius;
-            HitY = Y - Radius;
+            HitX = X;
+            HitY = Y;
             HitW = Radius * 2;
             HitH = Radius * 2;
             Speed = speed;
@@ -72,6 +73,28 @@ namespace arcanoid.GameLogic
                 canvas.Children.Add(circle);
             Canvas.SetLeft(circle, X - Radius);
             Canvas.SetTop(circle, Y - Radius);
+            // Отображение красной точки в центре круга
+            //Ellipse centerDot = new Ellipse
+            //{
+            //    Width = 4,
+            //    Height = 4,
+            //    Fill = Brushes.Red
+            //};
+            //Canvas.SetLeft(centerDot, X - 2);
+            //Canvas.SetTop(centerDot, Y - 2);
+            //canvas.Children.Add(centerDot);
+
+            //Rectangle hitbox = new Rectangle
+            //{
+            //    Width = HitW,
+            //    Height = HitH,
+            //    Stroke = Brushes.Red,
+            //    StrokeDashArray = new DoubleCollection { 2 },
+            //    StrokeThickness = 1
+            //};
+            //Canvas.SetLeft(hitbox, HitX - Radius);
+            //Canvas.SetTop(hitbox, HitY - Radius);
+            //canvas.Children.Add(hitbox);
         }
     }
 }
