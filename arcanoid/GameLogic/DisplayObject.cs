@@ -19,14 +19,14 @@ namespace arcanoid.GameLogic
         public Double Angle { get; set; }
         public Double Acceleration { get; set; }
         public Double AccelAngle { get; set; }
-        public Double HitX { get; set; }
-        public Double HitY { get; set; }
-        public Double HitW { get; set; }
-        public Double HitH { get; set; }
-        public Rect HitBox
-        {
-            get => new Rect(HitX - 5, HitY - 5, HitW + 10, HitH + 10);
-        }
+        //public Double HitX { get; set; }
+        //public Double HitY { get; set; }
+        //public Double HitW { get; set; }
+        //public Double HitH { get; set; }
+        //public Rect HitBox
+        //{
+        //    get => new Rect(HitX - 5, HitY - 5, HitW + 10, HitH + 10);
+        //}
 
         [JsonIgnore]
         public SolidColorBrush color { get; set; }
@@ -59,6 +59,7 @@ namespace arcanoid.GameLogic
         //        _ => null
         //    };
         //}
+        public abstract Rect GetHitbox();
         public abstract void ChangeBorder(Color color, double borderSize = 1);
         public abstract void Draw(Canvas canvas);
         public virtual void Move(double width, double height, bool useAcceleration = false)
@@ -81,14 +82,15 @@ namespace arcanoid.GameLogic
 
             X += vx;
             Y += vy;
-            HitX += vx;
-            HitY += vy;
+            //HitX += vx;
+            //HitY += vy;
 
+            var hitbox = GetHitbox();
             // Проверка границ и отражение
-            if (X < 0) { X = 0; HitX = 0 ; Angle = 180 - Angle; }
-            if (X > width) { X = width; HitX = width; Angle = 180 - Angle; }
-            if (Y < 0) { Y = 0; HitY = 0 ; Angle = -Angle; }
-            if (Y > height) { Y = height; HitY = height ; Angle = -Angle; }
+            if (hitbox.Left < 3) { X = hitbox.Width / 2 + 3; Angle = 180 - Angle; }
+            if (hitbox.Right > width - 5) { X = width - hitbox.Width / 2 - 15; Angle = 180 - Angle; }
+            if (hitbox.Top < 3) { Y = hitbox.Height / 2 + 3; Angle = -Angle; }
+            if (hitbox.Bottom > height - 15) { Y = height - hitbox.Height / 2 - 15; Angle = -Angle; }
         }
     }
 }

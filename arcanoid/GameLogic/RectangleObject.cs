@@ -87,6 +87,12 @@ namespace arcanoid.GameLogic
             };
             textBlock = null;
         }
+
+        public override Rect GetHitbox()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ChangeBorder(Color color, double borderSize = 1)
         {
             if (rectangle == null)

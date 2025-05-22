@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -51,6 +52,11 @@ namespace arcanoid.GameLogic
             this.color = new SolidColorBrush(color);
             initTrap();
             
+        }
+
+        public override Rect GetHitbox()
+        {
+            throw new NotImplementedException();
         }
         public override void ChangeBorder(Color color, double borderSize = 1)
         {
