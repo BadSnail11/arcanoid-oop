@@ -19,6 +19,8 @@ namespace arcanoid.GameLogic
         public Double Angle { get; set; }
         public Double Acceleration { get; set; }
         public Double AccelAngle { get; set; }
+
+        public bool isDeleted = false;
         //public Double HitX { get; set; }
         //public Double HitY { get; set; }
         //public Double HitW { get; set; }

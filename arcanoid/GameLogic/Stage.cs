@@ -187,11 +187,30 @@ namespace arcanoid.GameLogic
         }
         public void Draw()
         {
-            foreach(var obj in objects)
+            //List<DisplayObject> lstToDelete = new();
+            //foreach(var obj in objects)
+            //{
+            //    if (obj.isDeleted)
+            //    {
+            //        lstToDelete.Add(obj);
+            //        continue;
+            //    }
+            //    obj.Draw(canvas);
+            //}
+            List<int> idxToDelete = new();
+            for (int i = 0; i < objects.Count; i++)
             {
-                obj.Draw(canvas);
+                if (objects[i].isDeleted)
+                {
+                    idxToDelete.Add(i);
+                    continue;
+                }
+                objects[i].Draw(canvas);
             }
-            var a = 0;
+            foreach (var i in idxToDelete)
+            {
+                objects.RemoveAt(i);
+            }
         }
     }
 }

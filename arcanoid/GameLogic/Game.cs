@@ -120,35 +120,6 @@ namespace arcanoid.GameLogic
             // игровые объекты
             for (int i = 0; i < 20; i++)
             {
-                //stage.AddObject(new RectangleObject(
-                //    x: random.Next(50, 1800),
-                //    y: random.Next(50, 1000),
-                //    width: random.Next(20, 80),
-                //    height: random.Next(20, 80),
-                //    color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
-                //    speed: random.Next(10, 15),
-                //    angle: random.Next(0, 360),
-                //    acceleration: random.Next(6, 10),
-                //    accelAngle: random.Next(0, 360)));
-                //stage.AddObject(new TriangleObject(
-                //    x: random.Next(50, 1800),
-                //    y: random.Next(50, 1000),
-                //    size: random.Next(20, 60),
-                //    color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
-                //    speed: random.Next(10, 15),
-                //    angle: random.Next(0, 360),
-                //    acceleration: random.Next(6, 10),
-                //    accelAngle: random.Next(0, 360)));
-                //stage.AddObject(new TrapezoidObject(
-                //    x: random.Next(50, 1800),
-                //    y: random.Next(50, 1000),
-                //    width: random.Next(20, 80),
-                //    height: random.Next(20, 80),
-                //    color: Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)),
-                //    speed: random.Next(10, 15),
-                //    angle: random.Next(0, 360),
-                //    acceleration: random.Next(6, 10),
-                //    accelAngle: random.Next(0, 360)));
                 var circle = new CircleObject(
                     x: random.Next(50, 1800),
                     y: random.Next(50, 1000),
@@ -173,6 +144,16 @@ namespace arcanoid.GameLogic
                 //circle.ChangeBorder(Color.FromRgb(0, 0, 0), 2);
                 stage.AddObject(circle);
             }
+            stage.AddObject(new CircleObject(
+                    x: random.Next(50, 1800),
+                    y: random.Next(50, 1000),
+                    radius: 20,
+                    color: Color.FromRgb((byte)255, (byte)255, (byte)255),
+                    speed: random.Next(6, 8),
+                    angle: random.Next(0, 360),
+                    acceleration: random.Next(6, 10),
+                    accelAngle: random.Next(0, 360),
+                    isMain: true));
         }
 
         private bool CanPlace(DisplayObject obj)
@@ -286,6 +267,8 @@ namespace arcanoid.GameLogic
                     if (collisionQueue.Count == 0) continue;
 
                     var pair = collisionQueue.FirstOrDefault();
+                    if (pair == null)
+                        continue;
                     try
                     {
                         var obj1 = pair.Item1;
@@ -304,10 +287,10 @@ namespace arcanoid.GameLogic
 
         private async Task HandleCollision(DisplayObject object1, DisplayObject object2)
         {
-            var obj1 = object1 as CircleObject;
-            var obj2 = object2 as CircleObject;
+            //var obj1 = object1 as CircleObject;
+            //var obj2 = object2 as CircleObject;
 
-            if (obj1 != null && obj2 != null)
+            if (object1 is CircleObject obj1 && object2 is CircleObject obj2)
             {
                 double dist;
                 double minDist;
@@ -332,8 +315,23 @@ namespace arcanoid.GameLogic
                 obj1.Y += correction.Y;
                 obj2.X -= correction.X;
                 obj2.Y -= correction.Y;
+
+                if (obj1.IsMain)
+                    stage.RemoveObject(obj2);
+                else if (obj2.IsMain)
+                    stage.RemoveObject(obj1);
             }
+
         }
+
+        //private bool isMainCircle(DisplayObject obj)
+        //{
+        //    if (obj is CircleObject cObj)
+        //    {
+        //        return cObj.IsMain;
+        //    }
+        //    else return false;
+        //}
 
         private void PhysicsLoop()
         {

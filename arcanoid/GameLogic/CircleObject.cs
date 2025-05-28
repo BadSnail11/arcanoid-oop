@@ -20,6 +20,8 @@ namespace arcanoid.GameLogic
         private Ellipse circle;
         public double Radius { get; set; }
 
+        public bool IsMain;
+
         private void initCircle()
         {
             circle = new Ellipse
@@ -32,7 +34,7 @@ namespace arcanoid.GameLogic
             };
         }
         public CircleObject() { }
-        public CircleObject(double x, double y, double radius, Color color, double speed, double angle, double acceleration, double accelAngle)
+        public CircleObject(double x, double y, double radius, Color color, double speed, double angle, double acceleration, double accelAngle, bool isMain = false)
         {
             X = x;
             Y = y;
@@ -47,8 +49,8 @@ namespace arcanoid.GameLogic
             AccelAngle = accelAngle;
             //color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
             this.color = new SolidColorBrush(color);
+            IsMain = isMain;
             initCircle();
-            
         }
 
         public override Rect GetHitbox()
