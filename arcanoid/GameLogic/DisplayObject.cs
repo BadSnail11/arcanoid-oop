@@ -88,7 +88,7 @@ namespace arcanoid.GameLogic
             var hitbox = GetHitbox();
             // Проверка границ и отражение
             if (hitbox.Left < 3) { X = hitbox.Width / 2 + 3; Angle = 180 - Angle; }
-            if (hitbox.Right > width - 5) { X = width - hitbox.Width / 2 - 15; Angle = 180 - Angle; }
+            if (hitbox.Right > width - 15) { X = width - hitbox.Width / 2 - 15; Angle = 180 - Angle; }
             if (hitbox.Top < 3) { Y = hitbox.Height / 2 + 3; Angle = -Angle; }
             if (hitbox.Bottom > height - 15) { Y = height - hitbox.Height / 2 - 15; Angle = -Angle; }
         }

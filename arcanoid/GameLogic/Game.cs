@@ -170,7 +170,7 @@ namespace arcanoid.GameLogic
                     acceleration: random.Next(6, 10),
                     accelAngle: random.Next(0, 360));
                 }
-                circle.ChangeBorder(Color.FromRgb(0, 0, 0), 2);
+                //circle.ChangeBorder(Color.FromRgb(0, 0, 0), 2);
                 stage.AddObject(circle);
             }
         }
@@ -349,11 +349,14 @@ namespace arcanoid.GameLogic
                         height = gameCanvas.Height;
                     });
 
-                    stage.Update(width, height, useAcceleration);
+                    if (!isFullscreen)
+                        stage.Update(width - 2, height-25, useAcceleration);
+                    else
+                        stage.Update(width - 2, height, useAcceleration);
 
                     CheckCollisions(stage.objects);
                 }
-                Thread.Sleep(16); // 60 FPS
+                Thread.Sleep(5);
             }
         }
         public void Start()
