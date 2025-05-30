@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
 using System.Numerics;
 using System.Reflection.Metadata;
+using System.Windows.Documents;
 
 namespace arcanoid.GameLogic
 {
@@ -34,6 +35,8 @@ namespace arcanoid.GameLogic
         private bool isMenu = false;
         private bool isSettings = false;
 
+        private int platformSpeed = 15;
+
         private List<Tuple<DisplayObject, DisplayObject>> collisionQueue = new();
 
         public Game(Window window, Canvas gameCanvas)
@@ -41,6 +44,7 @@ namespace arcanoid.GameLogic
             this.gameCanvas = gameCanvas;
             this.mainWindow = window;
             stage = new Stage(this.gameCanvas);
+            stage.gameStat = new GameStat(1, 0, 3);
             renderTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(0.1) };
             renderTimer.Tick += (s, e) => {
                 this.gameCanvas.Children.Clear();
@@ -48,8 +52,11 @@ namespace arcanoid.GameLogic
                 stage.DrawBorder(gameCanvas.Width, (isFullscreen) ? gameCanvas.Height : gameCanvas.Height - 23);
                 if (isMenu && !isSettings) stage.DrawMenu(gameCanvas.Width, gameCanvas.Height);
                 if (isSettings) stage.DrawSettings(gameCanvas.Width, gameCanvas.Height);
+                stage.DrawStat(gameCanvas.Width, gameCanvas.Height);
+                CheckLevelStatus();
             };
             ToggleFullscreen();
+            InitializeServiceObjects();
             InitializeObjects();
 
 
@@ -66,7 +73,7 @@ namespace arcanoid.GameLogic
                 {
                     ToggleFullscreen();
                 }
-                else if (e.Key == Key.P)
+                else if (e.Key == Key.Space)
                 {
                     TogglePause();
                 }
@@ -78,9 +85,20 @@ namespace arcanoid.GameLogic
                 {
                     ToggleMenu();
                 }
+                else if (e.Key == Key.Right)
+                {
+                    ToggleRightButton();
+                }
+                else if (e.Key == Key.Left)
+                {
+                    ToggleLeftButton();
+                }
             };
+
+            
         }
-        private void InitializeObjects()
+
+        private void InitializeServiceObjects()
         {
             // меню
             stage.menuObjects.Add(new RectangleObject(0, 0, 150, 320, Color.FromRgb(100, 100, 100), ""));
@@ -116,9 +134,13 @@ namespace arcanoid.GameLogic
             var backRect = new RectangleObject(0, 60, 100, 50, Color.FromRgb(50, 50, 50), "Back");
             backRect.OnClick += obj => ToggleSetings();
             stage.settingsObjects.Add(backRect);
+        }
+        private void InitializeObjects()
+        {
+            
 
-            // игровые объекты
-            for (int i = 0; i < 20; i++)
+            //игровые объекты
+            for (int i = 0; i < stage.gameStat.Level * 7; i++)
             {
                 var circle = new CircleObject(
                     x: random.Next(50, 1800),
@@ -144,13 +166,53 @@ namespace arcanoid.GameLogic
                 //circle.ChangeBorder(Color.FromRgb(0, 0, 0), 2);
                 stage.AddObject(circle);
             }
+            // главный шарик
+            //stage.AddObject(new CircleObject(
+            //        x: random.Next(50, 1800),
+            //        y: random.Next(50, 1000),
+            //        radius: 20,
+            //        color: Color.FromRgb((byte)255, (byte)255, (byte)255),
+            //        speed: random.Next(6, 8),
+            //        angle: random.Next(0, 360),
+            //        acceleration: random.Next(6, 10),
+            //        accelAngle: random.Next(0, 360),
+            //        isMain: true));
+            // платформа
+            stage.AddObject(new RectangleObject(
+                x: 775,
+                y: 875,
+                width: 200,
+                height: 50,
+                color: Color.FromRgb(0, 0, 0),
+                speed: 0.0,
+                angle: 0.0,
+                acceleration: 0.0,
+                accelAngle: 0.0,
+                isPlatform: true));
+            SpawnMainBall();
+        }
+
+        private void SpawnMainBall(double x = 0, double y = 0)
+        {
+            if (x == 0d && y == 0d)
+            {
+                foreach (var obj in stage.objects)
+                {
+                    if (obj is RectangleObject rect && rect.isPlatform)
+                    {
+                        x = rect.X;
+                        y = rect.Y - 50;
+                        break;
+                    }
+                }
+            }
             stage.AddObject(new CircleObject(
-                    x: random.Next(50, 1800),
-                    y: random.Next(50, 1000),
+                    x: x,
+                    y: y,
                     radius: 20,
                     color: Color.FromRgb((byte)255, (byte)255, (byte)255),
                     speed: random.Next(6, 8),
-                    angle: random.Next(0, 360),
+                    angle: random.Next(225, 315),
                     acceleration: random.Next(6, 10),
                     accelAngle: random.Next(0, 360),
                     isMain: true));
@@ -213,6 +275,28 @@ namespace arcanoid.GameLogic
             gameCanvas.Background = new SolidColorBrush(color);
         }
 
+        private void ToggleRightButton()
+        {
+            if (isPaused)
+                return;
+            foreach (var obj in stage.objects)
+            {
+                if (obj is RectangleObject rect && rect.isPlatform)
+                    rect.X += platformSpeed;
+            }
+        }
+
+        private void ToggleLeftButton()
+        {
+            if (isPaused)
+                return;
+            foreach (var obj in stage.objects)
+            {
+                if (obj is RectangleObject rect && rect.isPlatform)
+                    rect.X -= platformSpeed;
+            }
+        }
+
         // логика объектов
         private void EnsureObjectsWithinBounds()
         {
@@ -268,7 +352,10 @@ namespace arcanoid.GameLogic
 
                     var pair = collisionQueue.FirstOrDefault();
                     if (pair == null)
+                    {
+                        collisionQueue.Remove(pair);
                         continue;
+                    }
                     try
                     {
                         var obj1 = pair.Item1;
@@ -289,6 +376,73 @@ namespace arcanoid.GameLogic
         {
             //var obj1 = object1 as CircleObject;
             //var obj2 = object2 as CircleObject;
+
+            if ((object1 is RectangleObject && object2 is BonusObject) || (object2 is RectangleObject && object1 is BonusObject))
+            {
+                RectangleObject rect;
+                BonusObject bonus;
+                if (object1 is RectangleObject)
+                {
+                    rect = object1 as RectangleObject;
+                    bonus = object2 as BonusObject;
+                } else
+                {
+                    rect = object2 as RectangleObject;
+                    bonus = object1 as BonusObject;
+                }
+                if (!rect.isPlatform)
+                    return;
+                gameCanvas.Dispatcher.Invoke(() => ApplyBonus(bonus));
+                bonus.isDeleted = true;
+            }
+
+            if ((object1 is CircleObject && object2 is RectangleObject) || (object2 is CircleObject && object1 is RectangleObject))
+            {
+                CircleObject circle;
+                RectangleObject rect;
+                if (object1 is CircleObject)
+                {
+                    circle = object1 as CircleObject;
+                    rect = object2 as RectangleObject;
+                }
+                else
+                {
+                    circle = object2 as CircleObject;
+                    rect = object1 as RectangleObject;
+                }
+                if (rect.isPoints || rect is BonusObject)
+                    return;
+                    // Находим ближайшую точку на прямоугольнике к центру круга
+                float closestX = (float)Math.Clamp(circle.X, rect.X - rect.Width / 2, rect.X + rect.Width / 2);
+                float closestY = (float)Math.Clamp(circle.Y, rect.Y - rect.Height / 2, rect.Y + rect.Height / 2);
+
+                // Вычисляем расстояние от центра круга до ближайшей точки
+                float dx = (float)(circle.X - closestX);
+                float dy = (float)(circle.Y - closestY);
+                float distanceSquared = dx * dx + dy * dy;
+
+                // Проверяем коллизию
+                if (distanceSquared > circle.Radius * circle.Radius) return;
+
+                // Нормализуем вектор столкновения
+                float distance = (float)Math.Sqrt(distanceSquared);
+                Vector2 normal = distance > 0
+                    ? new Vector2(dx / distance, dy / distance)
+                    : new Vector2(0, -1); // Если расстояние 0 (центр внутри), отталкиваем вверх
+
+                // Отражение круга
+                circle.Reflect(normal);
+
+                // Коррекция позиции для избежания залипания
+                float overlap = (float)(circle.Radius - distance);
+                if (overlap > 0)
+                {
+                    Vector2 correction = normal * overlap;
+                    circle.X += correction.X;
+                    circle.Y += correction.Y;
+                }
+                return;
+            }
 
             if (object1 is CircleObject obj1 && object2 is CircleObject obj2)
             {
@@ -316,22 +470,192 @@ namespace arcanoid.GameLogic
                 obj2.X -= correction.X;
                 obj2.Y -= correction.Y;
 
+                if (obj1.IsMain && obj2.IsMain)
+                {
+                    return;
+                }
+
                 if (obj1.IsMain)
-                    stage.RemoveObject(obj2);
+                {
+                    obj2.isDeleted = true;
+                    SpawnPoints((int)obj2.Radius, obj2.X, obj2.Y);
+                    SpawnBonus(obj2.X, obj2.Y);
+                }
                 else if (obj2.IsMain)
-                    stage.RemoveObject(obj1);
+                {
+                    obj1.isDeleted = true;
+                    SpawnPoints((int)obj1.Radius, obj1.X, obj1.Y);
+                    SpawnBonus(obj1.X, obj1.Y);
+                }
+                return;
             }
 
         }
 
-        //private bool isMainCircle(DisplayObject obj)
-        //{
-        //    if (obj is CircleObject cObj)
-        //    {
-        //        return cObj.IsMain;
-        //    }
-        //    else return false;
-        //}
+        private void ApplyBonus(BonusObject bonus)
+        {
+            switch (bonus.Type)
+            {
+                case Types.pBalls:
+                    AddBalls();
+                    break;
+                case Types.mBalls:
+                    DeleteBalls();
+                    break;
+                case Types.pWidth:
+                    ChangePlatformSize(100);
+                    break;
+                case Types.mWidth:
+                    ChangePlatformSize(-100);
+                    break;
+                case Types.pTry:
+                    stage.gameStat.Tries += 1;
+                    break;
+                case Types.mTry:
+                    stage.gameStat.Tries += (stage.gameStat.Tries == 1) ? 0 : -1;
+                    break;
+                case Types.pSpeed:
+                    platformSpeed += 5;
+                    break;
+                case Types.mSpeed:
+                    platformSpeed -= 5;
+                    break;
+                case Types.pBSpeed:
+                    ChangeBallsSpeed(3d);
+                    break;
+                case Types.mBSpeed:
+                    ChangeBallsSpeed(-3d);
+                    break;
+            }
+        }
+
+        private void ChangePlatformSize(int delta)
+        {
+            foreach (var obj in stage.objects)
+            {
+                if (obj is RectangleObject rect && rect.isPlatform)
+                {
+                    rect.ChangeWidth(delta);
+                    break;
+                }
+            }
+        }
+
+        private void ChangeBallsSpeed(double delta)
+        {
+            foreach (var obj in stage.objects)
+            {
+                if (obj is CircleObject circle && circle.IsMain)
+                {
+                    circle.Speed += delta;
+                }
+            }
+        }
+
+        private void AddBalls()
+        {
+            List<Tuple<double, double>> lst = new();
+            foreach (var obj in stage.objects)
+            {
+                if (obj is CircleObject circle && circle.IsMain)
+                {
+                    //SpawnMainBall(circle.X, circle.Y);
+                    lst.Add(new Tuple<double, double>(circle.X, circle.Y));
+                }
+            }
+            foreach (var obj in lst)
+            {
+                SpawnMainBall(obj.Item1, obj.Item2);
+            }
+        }
+
+        private void DeleteBalls()
+        {
+            int cnt = 0;
+            foreach (var obj in stage.objects)
+            {
+                if (obj is CircleObject circle && circle.IsMain)
+                {
+                    cnt++;
+                }
+            }
+            foreach (var obj in stage.objects)
+            {
+                if (cnt <= 1)
+                    break;
+                if (obj is CircleObject circle && circle.IsMain)
+                {
+                    circle.isDeleted = true;
+                    cnt -= 2;
+                }
+            }
+        }
+
+        private void CheckLevelStatus()
+        {
+            var mainBalls = 0;
+            var otherBalls = 0;
+            foreach (var obj in stage.objects)
+            {
+                if (obj is CircleObject circle)
+                {
+                    if (circle.IsMain)
+                        mainBalls++;
+                    else otherBalls++;
+                }
+            }
+            if (mainBalls == 0)
+            {
+                NewTry();
+            }
+            if (otherBalls == 0)
+            {
+                NewLevel(stage.gameStat.Level + 1);
+            }
+        }
+
+        private void NewTry()
+        {
+            stage.gameStat.Tries--;
+            if (stage.gameStat.Tries == -1)
+                NewLevel(1);
+            else
+            {
+                SpawnMainBall();
+            }
+            TogglePause();
+        }
+
+        private void NewLevel(int level)
+        {
+            stage.gameStat.Tries = 3;
+            stage.gameStat.Level = level;
+            if (level == 1)
+                stage.gameStat.Points = 0;
+            stage.ClearObjects();
+            InitializeObjects();
+        }
+
+        private void SpawnBonus(double x, double y)
+        {
+            var type = (Types)random.Next(10);
+            gameCanvas.Dispatcher.Invoke(() => stage.AddObject(new BonusObject(x, y, type)));
+        }
+
+        private void SpawnPoints(int points, double x, double y)
+        {
+            stage.gameStat.Points += points;
+            gameCanvas.Dispatcher.Invoke(() =>
+            {
+                var point = new RectangleObject(x, y, 50, 50, Color.FromArgb(0, 0, 0, 0), points.ToString());
+                point.ChangeBorder(Color.FromArgb(0, 0, 0, 0), 0);
+                point.ChangeTextColor(Color.FromRgb(0, 0, 0));
+                point.isPoints = true;
+                point.Speed = 4;
+                point.Angle = 90;
+                stage.AddObject(point);
+            });
+        }
 
         private void PhysicsLoop()
         {

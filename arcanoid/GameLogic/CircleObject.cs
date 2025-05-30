@@ -32,6 +32,8 @@ namespace arcanoid.GameLogic
                 Stroke = Brushes.Black,
                 StrokeThickness = 1
             };
+            HitBox.Width = Radius * 2 + 10;
+            HitBox.Height = Radius * 2 + 10;
         }
         public CircleObject() { }
         public CircleObject(double x, double y, double radius, Color color, double speed, double angle, double acceleration, double accelAngle, bool isMain = false)
@@ -53,14 +55,14 @@ namespace arcanoid.GameLogic
             initCircle();
         }
 
-        public override Rect GetHitbox()
-        {
-            var width = Radius * 2 + 10;
-            var height = Radius * 2 + 10;
-            var x = X - width / 2;
-            var y = Y - height / 2;
-            return new Rect(x, y, width, height);
-        }
+        //public override Rect GetHitbox()
+        //{
+        //    var width = Radius * 2 + 10;
+        //    var height = Radius * 2 + 10;
+        //    var x = X - width / 2;
+        //    var y = Y - height / 2;
+        //    return new Rect(x, y, width, height);
+        //}
 
         public Vector2 Velocity => new Vector2(
             (float)(Speed * Math.Cos(Angle * Math.PI / 180f)),

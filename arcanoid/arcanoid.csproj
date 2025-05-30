@@ -8,4 +8,50 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="images\mBalls.png" />
+    <None Remove="images\mBSpeed.png" />
+    <None Remove="images\mSpeed.png" />
+    <None Remove="images\mTry.png" />
+    <None Remove="images\mWidth.png" />
+    <None Remove="images\pBalls.png" />
+    <None Remove="images\pBSpeed.png" />
+    <None Remove="images\pSpeed.png" />
+    <None Remove="images\pTry.png" />
+    <None Remove="images\pWidth.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="images\mballs.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\mbspeed.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\mspeed.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\mtry.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\mwidth.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\pballs.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\pbspeed.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\pspeed.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\ptry.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\pwidth.png">
+      <CopyToOutputDirectory>images</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
 </Project>

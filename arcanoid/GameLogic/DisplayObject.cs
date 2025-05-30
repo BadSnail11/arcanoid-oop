@@ -21,6 +21,9 @@ namespace arcanoid.GameLogic
         public Double AccelAngle { get; set; }
 
         public bool isDeleted = false;
+
+        [JsonIgnore]
+        protected Rect HitBox;
         //public Double HitX { get; set; }
         //public Double HitY { get; set; }
         //public Double HitW { get; set; }
@@ -61,7 +64,12 @@ namespace arcanoid.GameLogic
         //        _ => null
         //    };
         //}
-        public abstract Rect GetHitbox();
+        public virtual Rect GetHitbox()
+        {
+            HitBox.X = X - HitBox.Width / 2;
+            HitBox.Y = Y - HitBox.Height / 2;
+            return HitBox;
+        }
         public abstract void ChangeBorder(Color color, double borderSize = 1);
         public abstract void Draw(Canvas canvas);
         public virtual void Move(double width, double height, bool useAcceleration = false)
@@ -92,7 +100,16 @@ namespace arcanoid.GameLogic
             if (hitbox.Left < 3) { X = hitbox.Width / 2 + 3; Angle = 180 - Angle; }
             if (hitbox.Right > width - 15) { X = width - hitbox.Width / 2 - 15; Angle = 180 - Angle; }
             if (hitbox.Top < 3) { Y = hitbox.Height / 2 + 3; Angle = -Angle; }
-            if (hitbox.Bottom > height - 15) { Y = height - hitbox.Height / 2 - 15; Angle = -Angle; }
+            if (hitbox.Bottom > height - 15) {
+                if (this is CircleObject circle && circle.IsMain)
+                    isDeleted = true;
+                if (this is RectangleObject rect && rect.isPoints)
+                    isDeleted = true;
+                if (this is BonusObject)
+                    isDeleted = true;
+                Y = height - hitbox.Height / 2 - 15;
+                Angle = -Angle;
+            }
         }
     }
 }

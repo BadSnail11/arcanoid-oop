@@ -21,6 +21,9 @@ namespace arcanoid.GameLogic
         //public List<DisplayObject> gameObjects = new List<DisplayObject>();
         public RectangleObject border;
         private Canvas canvas;
+
+        public GameStat gameStat;
+
         public Stage(Canvas gameCanvas)
         {
             canvas = gameCanvas;
@@ -153,37 +156,41 @@ namespace arcanoid.GameLogic
         public void DrawMenu(double canvasWidth, double canvasHeight)
         {
             var obj = menuObjects[0];
-            obj.X = canvasWidth / 2 - 75;
-            obj.Y = canvasHeight / 2 - 215;
+            obj.X = canvasWidth / 2;
+            obj.Y = canvasHeight / 2;
             obj.Draw(canvas);
             for (int i = 1; i < menuObjects.Count; i++)
             {
                 obj = menuObjects[i];
-                obj.X = canvasWidth / 2 - 50;
-                obj.Y = canvasHeight / 2 - 200 + (60 * (i - 1));
+                obj.X = canvasWidth / 2;
+                obj.Y = canvasHeight / 2 - 120 + (60 * (i - 1));
                 obj.Draw(canvas);
             }
         }
         public void DrawSettings(double canvasWidth, double canvasHeight)
         {
             var obj = settingsObjects[0];
-            obj.X = canvasWidth / 2 - 75;
-            obj.Y = canvasHeight / 2 - 215;
+            obj.X = canvasWidth / 2;
+            obj.Y = canvasHeight / 2;
             obj.Draw(canvas);
             for (int i = 1; i < settingsObjects.Count; i++)
             {
                 obj = settingsObjects[i];
-                obj.X = canvasWidth / 2 - 50;
-                obj.Y = canvasHeight / 2 - 200 + (60 * (i - 1));
+                obj.X = canvasWidth / 2;
+                obj.Y = canvasHeight / 2 - 120 + (60 * (i - 1));
                 obj.Draw(canvas);
             }
         }
         public void DrawBorder(double width, double height)
         {
-            border = new RectangleObject(0, 0, width - 12, height - 13, Color.FromArgb(0, 255, 255, 255), "");
+            border = new RectangleObject(width / 2 - 6, height / 2 - 6.5, width - 12, height - 13, Color.FromArgb(0, 255, 255, 255), "");
             //border.borderSize = 10;
             border.ChangeBorder(Color.FromRgb(0, 0, 255), 10);
             border.Draw(canvas);
+        }
+        public void DrawStat(double canvasWidth, double canvasHeight)
+        {
+            gameStat.Draw(canvas);
         }
         public void Draw()
         {

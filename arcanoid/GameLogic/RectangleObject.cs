@@ -21,11 +21,15 @@ namespace arcanoid.GameLogic
         public Double Width { get; set; }
         public Double Height { get; set; }
         public string Text { get; set; }
+
+        public bool isPlatform;
         //public double borderSize { get => rectangle.StrokeThickness; set => rectangle.StrokeThickness = value; }
         [JsonIgnore]
         private Rectangle rectangle;
         [JsonIgnore]
         private TextBlock? textBlock;
+        [JsonIgnore]
+        public bool isPoints = false;
 
         private void initRect()
         {
@@ -37,6 +41,8 @@ namespace arcanoid.GameLogic
                 Stroke = Brushes.Black,
                 StrokeThickness = 1
             };
+            HitBox.Width = Width + 10;
+            HitBox.Height = Height + 10;
         }
 
         public RectangleObject() { }
@@ -63,7 +69,7 @@ namespace arcanoid.GameLogic
                 Width = Width
             };
         }
-        public RectangleObject(double x, double y, double width, double height, Color color, double speed, double angle, double acceleration, double accelAngle)
+        public RectangleObject(double x, double y, double width, double height, Color color, double speed, double angle, double acceleration, double accelAngle, bool isPlatform = false)
         {
             X = x;
             Y = y;
@@ -77,21 +83,23 @@ namespace arcanoid.GameLogic
             //color = new SolidColorBrush(Color.FromRgb((byte)new Random().Next(256), (byte)new Random().Next(256), (byte)new Random().Next(256)));
             this.color = new SolidColorBrush(color);
 
-            rectangle = new Rectangle
-            {
-                Width = width,
-                Height = height,
-                Fill = this.color,
-                Stroke = Brushes.Black,
-                StrokeThickness = 1
-            };
+            //rectangle = new Rectangle
+            //{
+            //    Width = width,
+            //    Height = height,
+            //    Fill = this.color,
+            //    Stroke = Brushes.Black,
+            //    StrokeThickness = 1
+            //};
+            initRect();
             textBlock = null;
+            this.isPlatform = isPlatform;
         }
 
-        public override Rect GetHitbox()
-        {
-            throw new NotImplementedException();
-        }
+        //public override Rect GetHitbox()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public override void ChangeBorder(Color color, double borderSize = 1)
         {
@@ -99,6 +107,28 @@ namespace arcanoid.GameLogic
                 initRect();
             rectangle.Stroke = new SolidColorBrush(color);
             rectangle.StrokeThickness = borderSize;
+        }
+        public void ChangeTextColor(Color color)
+        {
+            if (rectangle == null)
+                initRect();
+            if (textBlock != null)
+            {
+                textBlock.Foreground = new SolidColorBrush(color);
+            }
+        }
+        public void ChangeText(string text)
+        {
+            if (textBlock != null)
+            {
+                Text = text;
+                textBlock.Text = text;
+            }
+        }
+        public void ChangeWidth(double delta)
+        {
+            Width += delta;
+            initRect();
         }
         public override string ToJson()
         {
@@ -121,8 +151,8 @@ namespace arcanoid.GameLogic
                 rectangle.MouseDown += (s, e) => RaiseClickEvent();
                 rectangle.Tag = true; // Помечаем, что обработчик уже добавлен
             }
-            Canvas.SetLeft(rectangle, X);
-            Canvas.SetTop(rectangle, Y);
+            Canvas.SetLeft(rectangle, X - Width / 2);
+            Canvas.SetTop(rectangle, Y - Height / 2);
             if (!(textBlock is null))
             {
                 if (!canvas.Children.Contains(textBlock))
@@ -132,9 +162,26 @@ namespace arcanoid.GameLogic
                     textBlock.MouseDown += (s, e) => RaiseClickEvent();
                     textBlock.Tag = true; // Помечаем, что обработчик уже добавлен
                 }
-                Canvas.SetLeft(textBlock!, X);
-                Canvas.SetTop(textBlock!, Y + rectangle.Height / 2 - 7);
+                Canvas.SetLeft(textBlock!, X - Width / 2);
+                Canvas.SetTop(textBlock!, Y - 7);
             }
+
+            //var hb = GetHitbox();
+            //Rectangle hitbox = new Rectangle
+            //{
+            //    //Width = HitW + 10,
+            //    //Height = HitH + 10,
+            //    Width = hb.Width,
+            //    Height = hb.Height,
+            //    Stroke = Brushes.Red,
+            //    StrokeDashArray = new DoubleCollection { 2 },
+            //    StrokeThickness = 1
+            //};
+            ////Canvas.SetLeft(hitbox, HitX - 5);
+            ////Canvas.SetTop(hitbox, HitY - 5);
+            //Canvas.SetLeft(hitbox, hb.X);
+            //Canvas.SetTop(hitbox, hb.Y);
+            //canvas.Children.Add(hitbox);
         }
     }
 }
